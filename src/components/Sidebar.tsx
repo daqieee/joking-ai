@@ -4,6 +4,7 @@ import {
   HelpCircle,
   MessageSquare,
   Plus,
+  Scale,
   Search,
   Trash2,
   X,
@@ -183,6 +184,11 @@ export default function Sidebar({
             <span>使用指南</span>
             <ArrowUpRight size={15} />
           </button>
+          <a className="sidebar-nav" href={`${import.meta.env.BASE_URL}licenses/`}>
+            <Scale size={17} />
+            <span>开源许可</span>
+            <ArrowUpRight size={15} />
+          </a>
           <div className="lab-note">
             <div className="lab-note-top">
               A LITTLE LESS SERIOUS<span>✳</span>

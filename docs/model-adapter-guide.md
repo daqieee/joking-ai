@@ -21,7 +21,7 @@ Vite 配置会在开发服务启动时预优化 wllama 的 JS 入口，避免首
 - 点击“拟真 · real / GGUF”：实际加载本站 Teapot GGUF，通过 wllama 前向计算返回英文 418 与中文说明。首次除 **102,016 字节的权重**，还会加载推理引擎与 WASM；总下载量大于 102 KB，具体运行时取决于浏览器能力。
 - 运行中点击“停止”，然后再次发送：旧请求不能覆盖新结果；已收到的正文会保留并标为未完成。
 
-示例由 [index.html](../examples/teapot/index.html)、[main.ts](../examples/teapot/main.ts) 和 [style.css](../examples/teapot/style.css) 组成。它直接导入现有 `generateReply()`，没有另写假 provider，也没有把第四款模型加进正式站。`tsconfig.json` 包含 `examples/`，所以 `npm run build` 会检查示例 TypeScript；当前 Vite 生产构建只以根目录 `index.html` 为入口，**不会把这个开发示例页面输出到 `dist/` 或发布到 GitHub Pages**。
+示例由 [index.html](../examples/teapot/index.html)、[main.ts](../examples/teapot/main.ts) 和 [style.css](../examples/teapot/style.css) 组成。它直接导入现有 `generateReply()`，没有另写假 provider，也没有把第四款模型加进正式站。`tsconfig.json` 包含 `examples/`，所以 `npm run build` 会检查示例 TypeScript；当前 Vite 生产构建发布工作台与许可证页，**不会把这个开发示例页面输出到 `dist/` 或发布到 GitHub Pages**。
 
 ## 调用路径与档位
 
@@ -229,6 +229,7 @@ npm run test:inference
 - 随站的小文件放在 `public/models/`，运行时 URL 用 `import.meta.env.BASE_URL`，确保 `/joking-ai/` 子路径有效。外部大文件使用固定 revision / commit 的 URL，验证浏览器 CORS、真实字节大小与哈希；下载大小和运行内存是两件事。
 - 更新 [scripts/verify-model-assets.mjs](../scripts/verify-model-assets.mjs) 的资源清单、精确大小与 SHA-256。自制权重提供可复现 builder；不要只把未知来源的 GGUF 放进目录。
 - 在 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md) 记录真实来源、固定版本、许可和本站修改；如果上游只是规则应用或灵感来源，明确说明，别声称存在未提供的 checkpoint。`upstream` 展示字段也应与通知一致。
+- 同步 [src/config/licenses.ts](../src/config/licenses.ts) 的许可页条目，保留项目名称、精确版本或修订、版权、上游链接与完整许可。需要时更新 [NOTICE](../NOTICE)；上游附带 NOTICE 的项目须保留相关通知，本站补充归属说明应清楚标明。本站原创部分采用 [MIT License](../LICENSE)，第三方模型与依赖仍按各自许可使用，不能统一改成本站 MIT。
 - 更新相关单元与浏览器测试。现有 [mock.test.ts](../src/lib/mock.test.ts)、[storage.test.ts](../src/lib/storage.test.ts) 和 [model-integration.spec.ts](../tests/e2e/model-integration.spec.ts) 等存在三模型枚举、数量和结果期望，新增模型时逐项扩展，保留原有三款行为断言。模型实验室、来源链接、首页卡片的测试也要按变更同步，不能仅删掉断言让测试变绿。
 
 ## 本地验证与 PR 交付

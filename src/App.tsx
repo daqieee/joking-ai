@@ -186,6 +186,9 @@ export default function App() {
           <span>
             <ShieldCheck size={12} />
             聊天记录仅保存在此设备
+            <a className="footer-license-link" href={`${import.meta.env.BASE_URL}licenses/`}>
+              开源许可
+            </a>
           </span>
         </footer>
       </main>

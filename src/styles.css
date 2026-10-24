@@ -1015,6 +1015,11 @@ h1 {
   letter-spacing: 0.25px;
   color: var(--muted);
 }
+.footer-license-link {
+  margin-left: 8px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .model-mark {
   width: 36px;
   height: 36px;

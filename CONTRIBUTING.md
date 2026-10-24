@@ -21,6 +21,8 @@
 
 按指南补齐模型定义、七档、六档模拟、真实权重与模板、图标和场景、存储及测试；记录准确来源、大小、哈希与许可。界面文案应区分模拟演出和真实计算，手写或未训练模型也要如实说明。
 
+新增或替换模型、运行时、图标等随站资源时，同时更新 [src/config/licenses.ts](src/config/licenses.ts) 的项目、版本、版权和完整许可，以及 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 的来源记录。需要归属说明时同步 [NOTICE](NOTICE)；上游附带 NOTICE 时保留相关原文，并明确区分本站补充说明。本站原创部分沿用 [MIT License](LICENSE)，第三方作品保留各自条款；不要用本站 MIT 覆盖上游许可。
+
 代码 / 模型改动运行：
 
 ```bash

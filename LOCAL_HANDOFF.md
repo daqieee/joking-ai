@@ -15,6 +15,7 @@
 - Teapot 上游是 MIT 许可的规则与词库应用，没有神经模型权重。本站拟真为独立手写的 102,016 字节 GGUF，真实前向计算输出 `418` 拒绝，未训练、不具备语义理解，不能称为上游 Teapot 模型。
 - 聊天记录保存在当前浏览器 `localStorage`，支持恢复、搜索和删除；保存模型、档位、内容格式与执行模式。切换、新建对话或停止生成会使旧请求失效。
 - Vite base 必须保持 `/joking-ai/`，用于 GitHub Pages 仓库子路径。
+- 本站原创部分采用根目录 `LICENSE` 的 MIT；`NOTICE` 单独记录本站许可范围与鹈鹕归属。`/joking-ai/licenses/` 以 `src/config/licenses.ts` 列出三款模型来源、本站 Teapot、运行时和图标的版权及完整许可，Lucide ISC 与 Feather MIT 一并保留。新增资源时同步该表、`THIRD_PARTY_NOTICES.md` 与必要的 `NOTICE`；查看许可证页不会加载模型。
 
 ## 本地运行
 

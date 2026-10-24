@@ -46,6 +46,12 @@ npm run preview
 
 上游链接、采样设置、许可、实现边界与本机验收结果见 [模型集成说明](docs/model-integration.md)；第三方文件与许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
+## 许可与第三方归属
+
+本站原创代码、文档、静态预设与独立 Teapot 权重及生成器采用 [MIT License](LICENSE)，Copyright (c) 2026 Joking AI contributors。模型、图标与运行时分别沿用各自的许可；完整项目名称、版本、版权与许可正文见[第三方许可页](https://daqieee.github.io/joking-ai/licenses/)及 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。页面文本随站打包，打开它不会加载模型。
+
+鹈鹕原始权重采用 Apache-2.0，本站提供许可全文及单独的 [NOTICE](NOTICE) 归属说明；Lucide 保留 ISC 通知，Feather 来源部分同时保留 MIT 通知。NOTICE 明确区分上游模型与本站六档静态预设，本站 MIT 不替换第三方条款。
+
 ## 浏览器内实际推理
 
 选中“拟真”后，输入区会显示下载大小与运行说明；发送消息才开始下载。模型通过 wllama / llama.cpp 在 Worker 中执行 CPU 单线程推理，兼容 GitHub Pages 的普通静态托管。项目不依赖跨域隔离响应头、服务器模型进程或外部推理 API，也不把提示词发送给推理服务。
@@ -75,6 +81,7 @@ src/
   components/               # 输入、选择器、消息、模拟剧场与安全预览
   assets/pelican.html        # 前六档共享的静态鹈鹕页面
   config/models.ts          # 三款模型与各自七档
+  config/licenses.ts        # 随站发布的项目、归属及完整许可文本
   hooks/useChat.ts          # 调度、流式回复、失败和取消隔离
   lib/mock.ts               # 本地模拟 provider
   lib/inference.ts          # 拟真入口，按需加载浏览器推理
@@ -83,6 +90,8 @@ tests/e2e/                  # 桌面/手机生产构建验收
 playwright.config.ts        # Chromium 项目与静态预览服务
 vite.config.ts              # 固定 base: /joking-ai/
 THIRD_PARTY_NOTICES.md       # 上游、文件与许可说明
+LICENSE                     # 本站原创部分的 MIT 标准许可
+NOTICE                      # 本站许可范围与鹈鹕归属说明
 ```
 
 ## 测试
@@ -109,6 +118,6 @@ npm run format:check
 3. 工作流 **Verify and deploy to GitHub Pages** 会先安装依赖、运行单元测试、构建与桌面/手机端到端测试，再发布 `dist/`。Pull request 仅检查；推送 `main` 或手动运行才发布。
 4. 部署成功后访问 [Joking AI](https://daqieee.github.io/joking-ai/)。部署状态以 Actions 与实际线上访问为准。
 
-Vite `base` 保持 `/joking-ai/`，图标、WASM 与模型资源均须相对此路径解析。应用没有客户端路由，刷新不依赖额外 SPA 404 配置。无需配置模型密钥或后端环境变量。
+Vite `base` 保持 `/joking-ai/`，图标、WASM 与模型资源均须相对此路径解析。工作台与 `/joking-ai/licenses/` 许可证页使用静态 HTML 入口，刷新不依赖额外 SPA 404 配置。无需配置模型密钥或后端环境变量。
 
 从本地恢复文件接续远端 Git 历史的具体步骤见[发布准备](docs/release-plan.md)。

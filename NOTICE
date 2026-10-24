@@ -1,0 +1,33 @@
+Joking AI — 许可范围与鹈鹕模型归属说明
+
+本站整理归属说明；这不是上游 NOTICE 原文。
+核对日期：2026-10-25。权重来源与哈希的原始核对记录日期为 2026-10-24。
+
+本站原创源代码、文档、静态预设和独立手写的 Teapot GGUF 及其生成脚本，
+采用根目录 LICENSE 中的 MIT License：
+Copyright (c) 2026 Joking AI contributors
+第三方项目、模型、运行时和图标保留各自的许可与版权声明，详见
+THIRD_PARTY_NOTICES.md 及站内 licenses/ 页面。本站 MIT 许可不替换这些许可。
+
+鹈鹕 PRO / 0u0-pelican-pro-0.2B-GGUF
+发布者与上游署名：0v0ai
+项目：https://huggingface.co/0v0ai/0u0-pelican-pro-0.2B-GGUF
+固定修订：6981d554c08a3727d960c9dbbd345af887f643e9
+文件：0u0-pelican-pro-v2-Q4_K_M.gguf
+大小：167,846,208 字节
+SHA-256：5d449b74def5447d236471e365c0db1e05396d7df2fd658cdff62116b9bee00a
+许可：Apache License, Version 2.0
+模型卡：https://huggingface.co/0v0ai/0u0-pelican-pro-0.2B-GGUF/blob/6981d554c08a3727d960c9dbbd345af887f643e9/README.md
+随站许可全文：models/LICENSE-pelican-Apache-2.0.txt
+
+上游模型卡与 GGUF 元数据声明 Apache-2.0。已核对的固定修订没有独立
+NOTICE 或 LICENSE 文件；本站因此附 Apache-2.0 标准全文，并整理此归属
+说明，不将其声称为上游提供的 NOTICE，也不补写上游未声明的版权年份。
+Apache-2.0 第 4(d) 项要求在上游作品附带 NOTICE 时保留相关归属通知；
+并非所有 Apache-2.0 项目都必须另建 NOTICE。
+
+拟真档按需从上述固定修订下载原始 GGUF 字节，不转换或修改该权重；
+权重不随本仓库或站点生产构建分发。上游模型卡将其记忆的 HTML 页面
+归因于 GPT-6 Astra 在一次 Codex 测试中的输出；这是上游的来源描述。
+本站前六档使用独立的站内静态预设，它们不由此模型现场生成，也不表示
+拟真权重能够生成相同页面。实际生成能力与限制见 docs/model-integration.md。
