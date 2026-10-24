@@ -13,6 +13,10 @@ export const MODELS: readonly ModelDefinition[] = [
     tone: 'sage',
     thinking: '正在为鹈鹕预约自行车',
     theatre: 'pelican',
+    upstream: {
+      url: 'https://huggingface.co/0v0ai/0u0-pelican-pro-0.2B-GGUF',
+      license: 'Apache-2.0',
+    },
     localModel: {
       size: '约 168 MB',
       provenance: '原项目 GGUF · Q4_K_M',
@@ -32,6 +36,10 @@ export const MODELS: readonly ModelDefinition[] = [
     tone: 'lavender',
     thinking: '正在给随机事件安排流程',
     theatre: 'random',
+    upstream: {
+      url: 'https://github.com/lijie-gh/a-random-number-model',
+      license: 'MIT',
+    },
     localModel: {
       size: '约 426 KB',
       provenance: '原项目 GGUF · Q4_K_M',
@@ -51,6 +59,10 @@ export const MODELS: readonly ModelDefinition[] = [
     tone: 'peach',
     thinking: '正在核验请求中的咖啡因',
     theatre: 'teapot',
+    upstream: {
+      url: 'https://github.com/namishsaxena/teapot-gpt',
+      license: 'MIT',
+    },
     localModel: {
       size: '约 102 KB',
       provenance: '本站自制 GGUF · 非原项目模型',

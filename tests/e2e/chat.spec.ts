@@ -241,7 +241,10 @@ test('shows user text literally and copies the exact local response', async ({ p
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(expected)
 })
 
-test('opens the three-model lab, selects a model and exposes help', async ({ page }) => {
+test('opens the three-model lab, selects a model and exposes help', async ({
+  page,
+  context,
+}, testInfo) => {
   await page.getByRole('button', { name: /3 位 整活搭子/ }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
@@ -249,6 +252,45 @@ test('opens the three-model lab, selects a model and exposes help', async ({ pag
   for (const oldName of ['杠精 Pro', '废话大师', '职场嘴替', '猫言猫语']) {
     await expect(dialog.getByRole('button', { name: new RegExp(oldName) })).toHaveCount(0)
   }
+  for (const model of [
+    {
+      name: '鹈鹕 PRO',
+      url: 'https://huggingface.co/0v0ai/0u0-pelican-pro-0.2B-GGUF',
+      license: 'Apache-2.0',
+    },
+    {
+      name: '随机数模型',
+      url: 'https://github.com/lijie-gh/a-random-number-model',
+      license: 'MIT',
+    },
+    {
+      name: 'TeapotGPT',
+      url: 'https://github.com/namishsaxena/teapot-gpt',
+      license: 'MIT',
+    },
+  ]) {
+    const card = dialog.locator('.lab-model-card').filter({ hasText: model.name })
+    const source = card.getByRole('link', { name: `查看 ${model.name} 原项目（新标签页）` })
+    await expect(source).toHaveAttribute('href', model.url)
+    await expect(source).toHaveAttribute('target', '_blank')
+    await expect(source).toHaveAttribute('rel', 'noopener noreferrer')
+    await expect(card.locator('.lab-card-source')).toContainText(`上游 · ${model.license}`)
+    await context.route(model.url, (route) =>
+      route.fulfill({ contentType: 'text/html', body: '<title>原项目</title>' }),
+    )
+    const [sourcePage] = await Promise.all([page.waitForEvent('popup'), source.click()])
+    await expect(sourcePage).toHaveURL(model.url)
+    await sourcePage.close()
+    await expect(dialog).toBeVisible()
+    await expect(dialog.locator('.lab-model-card.is-selected h3')).toContainText('鹈鹕 PRO')
+  }
+  await dialog.evaluate((node) => {
+    node.scrollTop = 0
+  })
+  await page.screenshot({
+    path: `handoff/validation/lab-sources-${testInfo.project.name}.png`,
+    fullPage: true,
+  })
   await dialog.getByRole('button', { name: /TeapotGPT/ }).click()
   await expect(page.getByRole('button', { name: '选择模型：TeapotGPT' })).toBeVisible()
   await openSidebar(page)

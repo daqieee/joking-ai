@@ -23,6 +23,10 @@ export interface ModelDefinition {
   tone: ModelTone
   thinking: string
   theatre: TheatreKind
+  upstream: {
+    url: string
+    license: string
+  }
   localModel: {
     size: string
     provenance: string

@@ -57,13 +57,9 @@ export default function InfoDialog({
           <>
             <div className="lab-model-grid">
               {MODELS.map((model) => (
-                <button
+                <article
                   className={`lab-model-card${model.id === modelId ? ' is-selected' : ''}`}
                   key={model.id}
-                  onClick={() => {
-                    onModel(model.id)
-                    onClose()
-                  }}
                 >
                   <div className="lab-card-top">
                     <ModelMark model={model} />
@@ -75,11 +71,30 @@ export default function InfoDialog({
                     <span>{model.version}</span>
                   </h3>
                   <p>{model.description}</p>
-                  <span className="lab-card-cta">
+                  <div className="lab-card-source">
+                    <a
+                      href={model.upstream.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`查看 ${model.name} 原项目（新标签页）`}
+                    >
+                      原项目 <ArrowUpRight size={13} aria-hidden="true" />
+                    </a>
+                    <span>上游 · {model.upstream.license}</span>
+                  </div>
+                  <button
+                    className="lab-card-cta"
+                    type="button"
+                    aria-label={`${model.name}：${model.id === modelId ? '当前搭子' : '和 TA 聊聊'}`}
+                    onClick={() => {
+                      onModel(model.id)
+                      onClose()
+                    }}
+                  >
                     {model.id === modelId ? '当前搭子' : '和 TA 聊聊'}
-                    <ArrowUpRight size={15} />
-                  </span>
-                </button>
+                    <ArrowUpRight size={15} aria-hidden="true" />
+                  </button>
+                </article>
               ))}
             </div>
             <p className="dialog-note">
