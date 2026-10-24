@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TeapotGPT · TypeScript 接口示例</title>
+  </head>
+  <body>
+    <main>
+      <a href="../../">← 返回聊天工作台</a>
+      <header>
+        <p class="eyebrow">JOKING AI / 开发示例</p>
+        <h1>一把茶壶，两条调用路径。</h1>
+        <p>直接复用 <code>generateReply()</code>，查看本地模拟与浏览器真实 GGUF 推理的回调。</p>
+      </header>
+
+      <section aria-labelledby="input-title">
+        <h2 id="input-title">1. 发送请求</h2>
+        <label for="prompt">给茶壶一个需求</label>
+        <textarea id="prompt" rows="3" maxlength="4000">请帮我煮一杯咖啡。</textarea>
+        <p class="hint">输入上限 4000 个 UTF-16 码元。本例的两条路径都不会理解输入语义。</p>
+        <div class="actions">
+          <button id="mock" type="button">模拟 · medium / 微沸</button>
+          <button id="real" type="button">拟真 · real / GGUF</button>
+          <button id="stop" class="secondary" type="button" disabled>停止</button>
+        </div>
+        <p class="hint">
+          模拟不加载模型、引擎或 WASM。拟真仅在点击后加载；首次除 102,016 字节的本站手写
+          GGUF，还需要推理引擎与 WASM，总下载量大于 102 KB。
+        </p>
+      </section>
+
+      <section aria-labelledby="status-title">
+        <h2 id="status-title">2. 状态与进度</h2>
+        <p id="status" class="status" role="status">待发送</p>
+        <p id="progress">选择一个按钮开始。停止后可以再次发送。</p>
+      </section>
+
+      <section aria-labelledby="stage-title">
+        <h2 id="stage-title">3. onStage 累计阶段</h2>
+        <p id="stage-meta" class="hint">尚未收到阶段。只有模拟路径会调用 onStage。</p>
+        <ol id="steps"></ol>
+      </section>
+
+      <section aria-labelledby="output-title">
+        <h2 id="output-title">4. onToken 累计正文与最终结果</h2>
+        <p id="stream-meta" class="hint">尚未收到 onToken；模拟路径会直接返回最终结果。</p>
+        <pre id="output" aria-label="回复正文">等待回复…</pre>
+        <p id="result-meta" class="hint">尚未返回 ReplyResult。</p>
+      </section>
+
+      <footer>
+        Teapot 上游是 MIT 许可的规则应用。本例拟真使用本站手写、未训练的 GGUF，非上游模型。 这是
+        Vite 开发示例，当前生产构建不发布此页面。
+      </footer>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

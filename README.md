@@ -4,6 +4,8 @@
 
 中文整活聊天工作台，使用 React + TypeScript + Vite，可部署到 GitHub Pages，无需后端或 API Key。只提供鹈鹕 PRO、随机数模型与 TeapotGPT，分别有六档本地模拟和一档浏览器 GGUF 推理。界面明确区分 `MOCK` 与实际推理。
 
+**想添加自己的搞笑 AI？** 从 [AI 接口与模型接入指南](docs/model-adapter-guide.md) 开始，运行 [TeapotGPT 开发示例](examples/teapot/index.html)，再按 [贡献指南](CONTRIBUTING.md) 提交 PR。指南包含当前浏览器 TypeScript API、累计回调、取消处理，以及新增模型需要修改的实际文件。
+
 ## 本地开发
 
 需要 Node.js 22.12+，推荐 Node.js 24。项目固定在 `/joking-ai/` 子路径运行。
@@ -12,6 +14,8 @@
 npm ci
 npm run dev
 ```
+
+工作台位于 `http://localhost:5173/joking-ai/`；Teapot 接口示例位于 `http://localhost:5173/joking-ai/examples/teapot/`，可直接试用模拟与真实 GGUF 推理。示例仅由 Vite 开发服务提供，当前生产构建不发布此页面。
 
 生产构建与预览：
 
@@ -61,6 +65,9 @@ npm run preview
 ```text
 .github/workflows/deploy.yml  # 检查、浏览器回归与 GitHub Pages 部署
 docs/model-integration.md    # 三源研究、档位、运行边界与实测结果
+docs/model-adapter-guide.md  # 浏览器 API 契约、新模型逐项接入指南
+examples/teapot/             # 直接复用 generateReply 的开发示例
+CONTRIBUTING.md              # fork、验证与提交 PR
 public/                     # 本地品牌、运行时及微型模型资源
 scripts/                    # 运行时资源准备与真实推理 smoke
 src/

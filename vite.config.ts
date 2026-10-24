@@ -18,6 +18,9 @@ export default defineConfig({
     },
   ],
   base: '/joking-ai/',
+  // Prepare this lazy Worker dependency before the first real request, avoiding
+  // a development-page reload. The browser still loads it only on real Send.
+  optimizeDeps: { include: ['@wllama/wllama/esm/index.js'] },
   worker: { format: 'es' },
   test: {
     include: ['src/**/*.test.ts'],
