@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src 'none'; script-src 'none'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'"
+    />
+    <title>鹈鹕，出发。</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 22px;
+        font:
+          14px/1.7 system-ui,
+          sans-serif;
+        color: #3d4d37;
+        background: #f4f7ee;
+      }
+      main {
+        max-width: 660px;
+        margin: auto;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0;
+        font-weight: 650;
+      }
+      .badge {
+        font-size: 11px;
+        padding: 4px 10px;
+        border: 1px solid #ccd9b9;
+        border-radius: 99px;
+      }
+      .scene {
+        border: 1px solid #dbe3cf;
+        border-radius: 15px;
+        background: #fffefa;
+        margin: 15px 0;
+        overflow: hidden;
+      }
+      svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .wheel {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: spin 2.4s linear infinite;
+      }
+      .rider {
+        animation: bob 1.6s ease-in-out infinite;
+      }
+      .meters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .meter {
+        padding: 10px 12px;
+        border-radius: 9px;
+        background: #e8efdd;
+        font-size: 11px;
+      }
+      .meter b {
+        display: block;
+        font-size: 16px;
+      }
+      .caption {
+        font-size: 11px;
+        color: #526345;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes bob {
+        50% {
+          transform: translateY(-3px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+        }
+      }
+      @media (max-width: 360px) {
+        body {
+          padding: 13px;
+        }
+        h1 {
+          font-size: 18px;
+        }
+        .meters {
+          gap: 6px;
+        }
+        .meter {
+          padding: 8px;
+        }
+        .badge {
+          font-size: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>鹈鹕，出发。</h1>
+        <span class="badge">快乐骑行</span>
+      </header>
+      <div class="scene">
+        <svg viewBox="0 0 560 270" role="img" aria-label="一只戴头盔的鹈鹕骑着自行车去河边兜风">
+          <circle cx="461" cy="49" r="19" fill="#edf1d9" />
+          <path d="M0 227Q140 204 280 225T560 219V270H0Z" fill="#e8efdd" />
+          <path d="M0 235H560" stroke="#bdcda7" stroke-width="2" />
+          <g fill="none" stroke="#4e5d43" stroke-width="4">
+            <g class="wheel">
+              <circle cx="178" cy="193" r="40" />
+              <path
+                d="M138 193H218M178 153V233M150 165L206 221M150 221L206 165"
+                stroke-width="1.5"
+              />
+            </g>
+            <g class="wheel">
+              <circle cx="370" cy="193" r="40" />
+              <path
+                d="M330 193H410M370 153V233M342 165L398 221M342 221L398 165"
+                stroke-width="1.5"
+              />
+            </g>
+            <path
+              d="M178 193L226 130L284 193H178L258 151H349L370 193M284 193L309 118L335 115M211 128H239"
+              stroke="#8a9e6f"
+              stroke-width="6"
+              stroke-linecap="round"
+            />
+          </g>
+          <g class="rider">
+            <ellipse
+              cx="263"
+              cy="108"
+              rx="51"
+              ry="39"
+              fill="#fbf7e7"
+              stroke="#c8cbb4"
+              stroke-width="2"
+            />
+            <path d="M238 102Q264 79 286 108Q268 128 238 102" fill="#e9e4ce" />
+            <path d="M306 103Q333 86 329 60" stroke="#fbf7e7" stroke-width="25" fill="none" />
+            <ellipse
+              cx="330"
+              cy="50"
+              rx="20"
+              ry="23"
+              fill="#fbf7e7"
+              stroke="#c8cbb4"
+              stroke-width="1.5"
+            />
+            <path
+              d="M345 47L405 57L346 65Q355 84 380 64"
+              fill="#e6b577"
+              stroke="#cf9f66"
+              stroke-width="1.5"
+            />
+            <circle cx="336" cy="43" r="3" fill="#37442e" />
+            <path
+              d="M251 133L249 158L277 178M286 134L310 150L326 133"
+              stroke="#dbb67b"
+              stroke-width="7"
+              fill="none"
+              stroke-linecap="round"
+            />
+            <path
+              d="M313 30Q330 17 347 32"
+              stroke="#9bb57b"
+              stroke-width="10"
+              fill="none"
+              stroke-linecap="round"
+            />
+          </g>
+          <text x="37" y="48" font-size="11" fill="#526345">头盔 ✓ 车铃 ✓ 鱼的梦想 ✓</text>
+        </svg>
+      </div>
+      <div class="meters">
+        <div class="meter">骑行准备<b>已就绪</b></div>
+        <div class="meter">今日目标<b>去河边兜风</b></div>
+      </div>
+      <p class="caption">本站原创预设网页 · 六档模拟演出结束后，均展示这份固定 HTML。</p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Joking AI · Real GGUF inference smoke</title>
+    <style>
+      body {
+        font: 16px/1.6 system-ui;
+        padding: 32px;
+        background: #f6f8f4;
+        color: #18302b;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        border: 1px solid #bfd1c5;
+        border-radius: 12px;
+        padding: 20px;
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>真实 GGUF · Chromium 验证</h1>
+    <p>CPU 单线程 / 无 COOP、COEP / 模型结果来自实际 WASM forward pass</p>
+    <pre id="result">等待测试…</pre>
+    <script type="module" src="./inference-smoke-entry.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+playwright-report/
+test-results/
+.inference-smoke-dist/
+.model-cache/
+.DS_Store
+*.log
+*.zip
+/EXPORT_MANIFEST.json
+/handoff/
+/validation/
+.env
+.env.*
+!.env.example
