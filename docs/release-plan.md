@@ -1,13 +1,14 @@
-# Git 接续与发布准备
+# Git 接续与发布记录
 
-2026-10-24 已完成本地 Git 初始化、获取远端 `main`、接续原提交历史与源文件暂存。尚未执行 Git 提交、推送或 GitHub Pages 部署。
+2026-10-24 已完成本地 Git 接续、实现提交与推送，GitHub Pages 已成功部署。
 
 ## 当前起点
 
 - 工作目录：`D:\project\joking-ai`。源文件来自恢复的本地项目，现已恢复 `.git`。
 - 目标仓库：[daqieee/joking-ai](https://github.com/daqieee/joking-ai)。接续时远端 `main` 为 `fcbe3398a8fc6b82eee8e7e7be6563cebf534cdc`，仅有 README。
-- 本地 `main` 已接续该远端提交，功能文件已暂存；最终文档更新后需要重新暂存，再创建后续提交。
-- 生产 base 是 `/joking-ai/`，目标地址为 [Joking AI](https://daqieee.github.io/joking-ai/)。
+- 实现提交为 [`00c4929033938e4bd70e62933ed891e7bb54837d`](https://github.com/daqieee/joking-ai/commit/00c4929033938e4bd70e62933ed891e7bb54837d)，父提交保留 `fcbe3398a8fc6b82eee8e7e7be6563cebf534cdc`，已推送到 `main`。
+- [Actions 运行 40048570024](https://github.com/daqieee/joking-ai/actions/runs/40048570024) 的 `verify` 与 `deploy` 均成功。
+- 生产 base 是 `/joking-ai/`，正式地址为 [Joking AI](https://daqieee.github.io/joking-ai/)，已实际打开首页。
 
 ## 无 Git 元数据时的恢复方案
 
@@ -32,9 +33,9 @@ git diff --cached --check
 
 `.gitignore` 已排除旧版 `EXPORT_MANIFEST.json`、日志、压缩包、`handoff/`、依赖、构建产物、模型缓存和临时测试产物。最新验收截图与报告在本地 `handoff/validation/` 保留，不纳入代码提交。
 
-## 当前待执行步骤
+## 本轮提交与发布
 
-最终文档更新后重新暂存，并检查[最终验收结果](model-integration.md#本站验收结果)、差异和格式，再创建一个后续提交：
+本轮已检查[最终验收结果](model-integration.md#本站验收结果)、暂存差异和格式，完成后续实现提交并推送：
 
 ```powershell
 git add .github docs scripts tests README.md LOCAL_HANDOFF.md THIRD_PARTY_NOTICES.md
@@ -43,14 +44,14 @@ git commit -m "Build Joking AI with three local joke models"
 git log --oneline --graph -n 4
 ```
 
-## 主任务确认后发布
-
-推送属于后续发布步骤，等主任务发出验收和发布信号后执行：
-
 ```powershell
 git push origin main
 ```
 
 仓库已只读确认 Pages 的 `build_type=workflow`，无需修改设置。工作流 **Verify and deploy to GitHub Pages** 依次检查格式、微型模型可复现构建与哈希、单元测试、TypeScript / 生产构建、桌面及手机参数模拟 E2E，再上传 `dist/` 并部署。
 
-部署后还需实际打开线上地址，检查 `/joking-ai/` 资源、两批首页卡片联动、三模型选择、六档模拟、鹈鹕预设页面、随机与 Teapot 的实际 GGUF、刷新恢复和手机布局。鹈鹕远程权重下载及完整生成按线上实际结果另记；本地部分输出验收不能替代它。
+## 线上验收
+
+主任务已在正式地址人工确认首页可用、鹈鹕“中”档模拟成功且预设静态文件正确、随机数首页卡片联动正确、七档菜单正确。随机数拟真实际输出 `89` 并显示 GGUF 标识；Teapot 拟真完整输出 `418 · I'm a teapot.` 及中文自制权重说明。刷新后消息、模型与拟真元数据保持，详细范围见[模型验收说明](model-integration.md#线上发布验收)。
+
+鹈鹕远程权重全量下载、完整 HTML 与长序列仍未验证；本地有界生成不能替代这些结论。部署后的本次说明补记只改 `LOCAL_HANDOFF.md`、`docs/model-integration.md` 和 `docs/release-plan.md`，提交信息使用 `docs: record verified GitHub Pages deployment [skip ci]`，不改变已部署的实现产物。

@@ -50,8 +50,8 @@ npm run format:check
 
 ## Git 与部署
 
-目标仓库为 [daqieee/joking-ai](https://github.com/daqieee/joking-ai)，预期地址为 [Joking AI](https://daqieee.github.io/joking-ai/)。GitHub Pages 的 Source 设为 GitHub Actions，工作流 `.github/workflows/deploy.yml` 先执行检查，再部署 `dist/`。本地生产预览不等于线上部署；以 Actions 及实际线上验收结果为准。
+目标仓库为 [daqieee/joking-ai](https://github.com/daqieee/joking-ai)，正式地址为 [Joking AI](https://daqieee.github.io/joking-ai/)。GitHub Pages 的 Source 已是 GitHub Actions，工作流 `.github/workflows/deploy.yml` 先执行检查，再部署 `dist/`。2026-10-24 的[发布运行 40048570024](https://github.com/daqieee/joking-ai/actions/runs/40048570024) 中 `verify` 与 `deploy` 均成功。正式站点已人工验收首页、鹈鹕“中”档模拟与预设静态文件、首页卡片模型联动、七档菜单；随机数拟真实际输出 `89` 并显示 GGUF 标识，Teapot 拟真完整输出 `418 · I'm a teapot.` 及中文自制权重说明，刷新后消息、模型与拟真元数据保持。详细范围见[线上发布验收](docs/model-integration.md#线上发布验收)，不包含鹈鹕远程权重全量下载或完整 HTML 生成。
 
 如果从旧压缩包恢复，注意压缩包不携带 `.git`，不要覆盖克隆仓库的 Git 元数据。旧 `EXPORT_MANIFEST.json` 仅用于核对第一阶段压缩包，后续修改不再与其哈希一致。
 
-2026-10-23 接续时本目录没有 `.git`，远端 `main` 已确认是 `fcbe3398a8fc6b82eee8e7e7be6563cebf534cdc`，只有 README。2026-10-24 已初始化本地 Git、获取并接续该远端历史，功能文件已暂存，尚未提交或推送。最终文档更新后统一重新暂存，再按主任务的验收与发布信号执行。保留远端历史的恢复方案和当前步骤见[发布准备](docs/release-plan.md)。最终截图与机器可读 E2E 报告保存在 `handoff/validation/`，旧 `handoff/screenshots/` 属于早期版本，交接产物由 `.gitignore` 排除。
+2026-10-23 接续时本目录没有 `.git`，远端 `main` 为 `fcbe3398a8fc6b82eee8e7e7be6563cebf534cdc`，只有 README。2026-10-24 已接续原历史并提交、推送实现提交 `00c4929033938e4bd70e62933ed891e7bb54837d`，该实现已经部署。保留远端历史的恢复方案与本轮发布记录见[发布记录](docs/release-plan.md)。最终截图与机器可读 E2E 报告保存在 `handoff/validation/`，旧 `handoff/screenshots/` 属于早期版本，交接产物由 `.gitignore` 排除。

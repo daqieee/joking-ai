@@ -84,10 +84,18 @@ node scripts/smoke-inference.mjs --pelican-only
 | 真实取消后恢复                       | 通过           | 下载取消 251 ms 返回 AbortError 后 Teapot 成功；鹈鹕 10 秒窗口停止在截止后 7 ms 返回、保留部分输出，随后 Teapot 真实生成再次成功                    |
 | 鹈鹕 v2 GGUF 真实浏览器推理          | 部分输出已验证 | 完整真实权重通过本地 HTTP 传输，90 秒内生成 3,795 个 UTF-8 字节，首段输出 3,022 ms；停止在 90,010 ms 返回 AbortError，`incomplete=true`；整页未完成 |
 | 鹈鹕上游浏览器 CORS                  | 前缀检查通过   | 固定 revision 的真实浏览器请求返回 206、`bytes 0-3/167846208` 与 `GGUF`，最终 CDN 允许跨域；未完成远程 168 MB 全量下载或远程文件哈希核对            |
-| GitHub Pages 在线部署                | 未执行         | 本地生产预览不等于线上部署，发布后另行核对                                                                                                          |
+| GitHub Pages 在线部署                | 已成功         | 实现提交 `00c4929` 已推送，Actions 运行 `40048570024` 的 `verify`、`deploy` 均成功，正式首页已人工打开                                              |
 
 完整 E2E 报告为 `handoff/validation/e2e-report.json`，最终增量报告为 `handoff/validation/e2e-final-runtime-report.json`。测试临时目录仅为 `test-results/playwright/`，未清理独立推理证据目录。早期 `handoff/screenshots/` 不是本轮截图。
 
 独立真实推理来自 `test-results/inference/report.json` 的 2026-10-24 01:06:54 UTC 记录（`ok=true`）。其中 10 秒鹈鹕窗口生成 366 个 UTF-8 字节 / 361 个 UTF-16 码元，首段输出 2,939 ms；`pelicanModelFinished=false` 明确表示没有自然完成。90 秒较长输出和对应 HTML 分别保存在 `pelican-report.json`、`pelican-output.html`；上游前缀检查在 `upstream-report.json`。这些 `ok=true` 表示有界生成、取消与恢复符合检查预期，不能解释为整页生成通过。
 
 鹈鹕本轮配置为 `n_ctx=32768`、`max_tokens=30000`、Q8 KV 缓存及 flash attention。32K 分配和前缀生成已运行，但 GGUF 训练上下文为 16K；尚未验证 30K 输出、32K 长序列、完整 HTML、实际内存峰值或逐字节复现。回调次数和“文本片段”不是输出 token 数。用于 smoke 的本地权重通过完整 SHA-256 校验；生产构建仍使用固定的上游 HTTPS 地址。
+
+## 线上发布验收
+
+2026-10-24，[实现提交 `00c4929`](https://github.com/daqieee/joking-ai/commit/00c4929033938e4bd70e62933ed891e7bb54837d) 经 [Actions 运行 40048570024](https://github.com/daqieee/joking-ai/actions/runs/40048570024) 检查并成功部署到 [正式站点](https://daqieee.github.io/joking-ai/)。主任务已在正式地址人工确认首页、鹈鹕“中”档模拟与预设静态文件、随机数首页卡片模型联动、七档菜单。
+
+线上随机数拟真实际输出 `89`，界面显示 GGUF 标识；Teapot 拟真完整输出 `418 · I'm a teapot.` 及中文自制权重说明。刷新后消息、所选模型与拟真元数据均保持。单次随机输出只验证实际推理和合法范围，不构成分布统计检验；Teapot 仍为本站未训练的手写权重。
+
+本轮未在正式站点完成鹈鹕远程 168 MB 权重全量下载或完整 HTML 生成验收，也未验证 30K 输出与 32K 长序列。上述本地 90 秒、3,795 个 UTF-8 字节的部分输出和上游 CORS 前缀检查不代表这些项目已通过。
