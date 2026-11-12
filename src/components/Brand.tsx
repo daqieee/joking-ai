@@ -1,4 +1,4 @@
-import { Bird, Dices, Coffee } from 'lucide-react'
+import { Bird, Dices, Coffee, Moon, Fish, Cat } from 'lucide-react'
 import type { ModelDefinition } from '../types'
 
 export function BrandMark({ small = false }: { small?: boolean }) {
@@ -18,7 +18,7 @@ export function BrandMark({ small = false }: { small?: boolean }) {
   )
 }
 
-const icons = { bird: Bird, dice: Dices, teapot: Coffee }
+const icons = { bird: Bird, dice: Dices, teapot: Coffee, sleepy: Moon, fish: Fish, cat: Cat }
 
 export function ModelMark({ model, small = false }: { model: ModelDefinition; small?: boolean }) {
   const Icon = icons[model.icon]

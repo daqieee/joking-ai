@@ -12,18 +12,28 @@ const names = [
   ['瘦', '中', '肥', '很肥', '特别肥', '超级无敌肥', '拟真'],
   ['随机', '很随机', '极其随机', '绝对随机', '量子随机', '命运的骰子', '拟真'],
   ['温水', '微沸', '沸腾', '高压', '锅炉超频', '宇宙茶道', '拟真'],
+  ['歇会儿', '摸鱼', '躺平', '已读不回', '甩锅大师', '宇宙休假', '拟真'],
+  ['小泡泡', '游一圈', '找零食', '鱼缸哲学', '深海会议', '宇宙鱼缸', '拟真'],
+  ['眯一会', '伸懒腰', '巡逻纸箱', '猫爪审核', '全屋制霸', '宇宙午睡', '拟真'],
 ]
 
-describe('three model local simulation', () => {
-  it('exposes only the three models with exactly seven model-specific levels', () => {
-    expect(MODELS.map((model) => model.id)).toEqual(['pelican-pro', 'random-number', 'teapot-gpt'])
+describe('six model local simulation', () => {
+  it('exposes only the six models with exactly seven model-specific levels', () => {
+    expect(MODELS.map((model) => model.id)).toEqual([
+      'pelican-pro',
+      'random-number',
+      'teapot-gpt',
+      'acedia',
+      'guppy',
+      'miso',
+    ])
     expect(DEFAULT_MODEL_ID).toBe('pelican-pro')
     MODELS.forEach((model, index) =>
       expect(getReasoningLevels(model.id).map((level) => level.name)).toEqual(names[index]),
     )
   })
 
-  it('gives all eighteen local combinations an explicitly simulated process', () => {
+  it('gives all thirty-six local combinations an explicitly simulated process', () => {
     for (const model of MODELS) {
       const steps = []
       for (const [index, level] of getReasoningLevels(model.id).slice(0, 6).entries()) {
@@ -89,7 +99,7 @@ describe('three model local simulation', () => {
   it('rejects empty prompts and never fakes seventh-level inference', () => {
     expect(() => generateMockResponse('  \n', 'pelican-pro', 'low')).toThrow('请先输入')
     for (const model of MODELS)
-      expect(() => generateMockResponse('你好', model.id, 'real')).toThrow('真实 GGUF')
+      expect(() => generateMockResponse('你好', model.id, 'real')).toThrow(/真实.*provider/)
   })
 
   it('preserves Unicode when summarizing conversation titles', () => {

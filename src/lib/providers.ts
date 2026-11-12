@@ -37,7 +37,9 @@ export async function generateReply(request: ReplyRequest): Promise<ReplyResult>
   const model = getModel(modelId)
   const level = getReasoning(reasoningId, model.id)
   if (level.id === 'real' && model.localModel) {
-    onProgress?.(`准备浏览器本地推理 · ${model.localModel.size} GGUF，首次发送需要下载`)
+    onProgress?.(
+      `准备浏览器本地推理 · ${model.localModel.size} ${model.localModel.runtime ?? 'GGUF'}，首次发送需要下载`,
+    )
     // The runtime is deferred until Send, never on selecting a model or level.
     const { generateLocalInference } = await import('./inference')
     throwIfAborted(signal)
@@ -49,7 +51,7 @@ export async function generateReply(request: ReplyRequest): Promise<ReplyResult>
       onToken,
     })
     throwIfAborted(signal)
-    return { ...result, provider: 'wllama' }
+    return { ...result, provider: model.localModel.runtime === 'ONNX' ? 'onnx' : 'wllama' }
   }
   const result = generateMockResponse(prompt, model.id, level.id)
   if (result.stage) {

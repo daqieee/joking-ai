@@ -2,7 +2,7 @@
 
 一本正经，胡说八道。A surprisingly serious platform for ridiculously unserious AI models.
 
-中文整活聊天工作台，使用 React + TypeScript + Vite，可部署到 GitHub Pages，无需后端或 API Key。只提供鹈鹕 PRO、随机数模型与 TeapotGPT，分别有六档本地模拟和一档浏览器 GGUF 推理。界面明确区分 `MOCK` 与实际推理。
+中文整活聊天工作台，使用 React + TypeScript + Vite，可部署到 GitHub Pages，无需后端或 API Key。提供鹈鹕 PRO、随机数模型、TeapotGPT、Acedia 摸鱼助手、Guppy 小鱼与 Miso 猫猫，分别有六档本地模拟和一档浏览器真实推理（GGUF 或 ONNX）。界面明确区分 `MOCK` 与实际推理。
 
 **想添加自己的搞笑 AI？** 从 [AI 接口与模型接入指南](docs/model-adapter-guide.md) 开始，运行 [TeapotGPT 开发示例](examples/teapot/index.html)，再按 [贡献指南](CONTRIBUTING.md) 提交 PR。指南包含当前浏览器 TypeScript API、累计回调、取消处理，以及新增模型需要修改的实际文件。
 
@@ -28,7 +28,7 @@ npm run preview
 
 ## 模型与档位
 
-三款模型各有七档，默认选择“鹈鹕 PRO / 中”。前六档通过本地预设过程和动画增加仪式感，最终结果遵守同一规则；这些文案是娱乐演出，**不是模型思维链，也不下载或运行 GGUF / WASM**。
+六款模型各有七档，默认选择“鹈鹕 PRO / 中”。前六档通过本地预设过程和动画增加仪式感，最终结果遵守同一规则；这些文案是娱乐演出，**不是模型思维链，也不下载或运行 GGUF / WASM**。
 
 | 档位 | 鹈鹕 PRO   | 随机数模型 | TeapotGPT |
 | ---- | ---------- | ---------- | --------- |
@@ -44,6 +44,12 @@ npm run preview
 - **随机数模型**：从直接掷数到概率分析、交叉验证、量子坍缩与命运推演；前六档通过 `crypto.getRandomValues` 与拒绝采样得到 0～100 的整数，最终正文只有数字。拟真档实际运行 425,888 字节的上游手写微型 GGUF，由其等概率 logits 和采样器选数；没有训练，不理解问题。
 - **TeapotGPT**：从温水升至宇宙茶道，前六档固定返回同一条 HTTP 418 茶壶回复。上游是规则与词库应用，没有神经模型权重；本站拟真档是**自行手写的 102,016 字节 GGUF**，经 wllama 前向计算输出 `418` 拒绝。该模型并非上游模型，没有训练，不具备语义理解。
 
+- **Acedia 摸鱼助手（135M）**：真实 LoRA 微调的懒散整活模型，拟真使用上游 105,453,984 字节 Q4_K_M GGUF；英文优先，每轮最多 600 个字符，可能自信胡说。六档模拟均为本站同一条摸鱼预设。
+- **Guppy 小鱼（8.7M）**：真实训练的英文鱼缸角色，原项目量化 ONNX 权重约 10.5 MB，词表约 161 KB。128 token 上下文；输入含格式最多 64 token。请用简短小写英文，避免中文、表情和不常见标点；未知字符报错，不静默丢弃。六档模拟为本站鱼缸预设。
+- **Miso 猫猫（约 3.45M）**：真实训练的英文猫角色，社区 ONNX 转换权重约 14.3 MB，词表约 101 KB。256 token 上下文，输入含格式最多 160 token；按上游逻辑转小写。训练有限，可能重复或不连贯。六档模拟为本站猫猫预设。
+
+新增三款拟真模型仅处理当前输入，不带入聊天历史，不提供可靠事实、建议或中文能力保证。动物模型另下载约 14.9 MB 的随站 ONNX WASM；下载大小不等于运行内存。失败不会回退到预设冒充真实结果。来源、tokenizer、上下文和实际验收见 [动物模型说明](docs/animal-models.md) 与 [新增模型记录](docs/added-models.md)。
+
 上游链接、采样设置、许可、实现边界与本机验收结果见 [模型集成说明](docs/model-integration.md)；第三方文件与许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## 许可与第三方归属
@@ -54,13 +60,13 @@ npm run preview
 
 ## 浏览器内实际推理
 
-选中“拟真”后，输入区会显示下载大小与运行说明；发送消息才开始下载。模型通过 wllama / llama.cpp 在 Worker 中执行 CPU 单线程推理，兼容 GitHub Pages 的普通静态托管。项目不依赖跨域隔离响应头、服务器模型进程或外部推理 API，也不把提示词发送给推理服务。
+选中“拟真”后，输入区会显示下载大小、语言限制与运行说明；发送消息才开始下载。GGUF 通过 wllama / llama.cpp、动物模型通过 ONNX Runtime Web，在 Worker 中执行 CPU 单线程推理，兼容 GitHub Pages 的普通静态托管。项目不依赖跨域隔离响应头、服务器模型进程或外部推理 API，也不把提示词发送给推理服务。
 
 首次下载需要网络。模型来源不可达、CORS、浏览器能力或可用内存不足时会显示错误并提供重试；停止、新建或切换对话会取消本轮任务。加载失败不会伪装成拟真成功。鹈鹕需要长上下文和较多运行内存，单线程 CPU 生成整页可能很慢；下载大小不等于运行内存。旧模型卡的网页长度和上下文建议不代表当前 v2 权重的实测结果，详见验收说明。
 
 ## 当前功能
 
-- 响应式侧栏、手机抽屉、灵感卡片、三款模型实验室与各自七档。
+- 响应式侧栏、手机抽屉、灵感卡片、六款模型实验室与各自七档。
 - 输入、发送、换行、分阶段模拟、实际下载/推理状态、停止生成、回复/源码复制；兼容中文输入法。
 - 本地聊天记录保存模型、档位和消息格式/执行模式；支持新建、搜索、恢复和删除。切换对话会使旧任务失效。
 - 最多保存最近 50 段对话，每段最多 100 条消息；输入上限 4000 个 UTF-16 码元。存储不可用时提示用户，并允许继续当前会话。
@@ -80,7 +86,7 @@ src/
   App.tsx                   # 工作台布局与导航状态
   components/               # 输入、选择器、消息、模拟剧场与安全预览
   assets/pelican.html        # 前六档共享的静态鹈鹕页面
-  config/models.ts          # 三款模型与各自七档
+  config/models.ts          # 六款模型与各自七档
   config/licenses.ts        # 随站发布的项目、归属及完整许可文本
   hooks/useChat.ts          # 调度、流式回复、失败和取消隔离
   lib/mock.ts               # 本地模拟 provider
@@ -102,12 +108,13 @@ npm run test:models
 npm run build
 npx playwright install chromium
 npm run test:e2e
+npm run test:inference:added
 npm run format:check
 ```
 
 端到端测试运行生产构建，先执行 `build`。Linux 缺少依赖时可用 `npx playwright install --with-deps chromium`；已有兼容 Chromium 时可通过 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` 指定路径。
 
-原有基础回归已迁移到三模型，继续覆盖发送、持久化、模型切换、停止生成、中文输入法、多行、长度、文本安全、复制、弹窗、焦点、存储恢复和窄屏。扩展验收涵盖三款模型的七档、旧人格不可选、18 种模拟组合零模型资源与模型域名请求、六档静态 HTML 字节一致、安全 iframe、真实下载失败与重试、取消后的真实再次推理，以及 320px 菜单布局。桌面与 Pixel 7 参数模拟均执行；这不是实体手机测试。axe 自动检查覆盖 WCAG A/AA，但不能代替人工可访问性检查。
+基础回归覆盖六款模型，继续覆盖发送、持久化、模型切换、停止生成、中文输入法、多行、长度、文本安全、复制、弹窗、焦点、存储恢复和窄屏。扩展验收涵盖六款模型的七档、旧人格不可选、36 种模拟组合零模型资源与模型域名请求、六档静态 HTML 字节一致、安全 iframe、真实下载失败与重试、取消后的真实再次推理，以及 320px 菜单布局。桌面与 Pixel 7 参数模拟均执行；这不是实体手机测试。axe 自动检查覆盖 WCAG A/AA，但不能代替人工可访问性检查。
 
 失败与取消测试只拦截故障请求，之后放行真实本地 GGUF，验证 wllama 能恢复生成；成功推理不由假响应代替。独立的 `node scripts/smoke-inference.mjs` 另行记录真实输出与耗时，`--pelican` 可运行大模型检查。最新命令、环境、通过项和未验证部分统一记录在[模型集成说明](docs/model-integration.md#本站验收结果)。
 
@@ -115,7 +122,7 @@ npm run format:check
 
 1. 将项目提交并推送到 `daqieee/joking-ai` 的 `main` 分支。
 2. 在仓库 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
-3. 工作流 **Verify and deploy to GitHub Pages** 会先安装依赖、运行单元测试、构建与桌面/手机端到端测试，再发布 `dist/`。Pull request 仅检查；推送 `main` 或手动运行才发布。
+3. 工作流 **Verify and deploy to GitHub Pages** 会先安装依赖、运行单元测试、构建与桌面/手机端到端测试，再下载固定版本新增模型并验证真实浏览器推理，全部通过才发布 `dist/`。Pull request 仅检查；推送 `main` 或手动运行才发布。
 4. 部署成功后访问 [Joking AI](https://daqieee.github.io/joking-ai/)。部署状态以 Actions 与实际线上访问为准。
 
 Vite `base` 保持 `/joking-ai/`，图标、WASM 与模型资源均须相对此路径解析。工作台与 `/joking-ai/licenses/` 许可证页使用静态 HTML 入口，刷新不依赖额外 SPA 404 配置。无需配置模型密钥或后端环境变量。

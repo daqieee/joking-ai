@@ -169,7 +169,9 @@ export default function Composer({
       <p className="composer-footnote">
         <span className="footnote-spark">✳</span> 人工智能，天然不正经。
         <span className="footnote-divider">·</span>
-        {isReal ? '当前档位使用浏览器本地 GGUF' : '当前回复由本地模拟生成'}
+        {isReal
+          ? `当前档位使用浏览器本地 ${model.localModel.runtime ?? 'GGUF'}`
+          : '当前回复由本地模拟生成'}
       </p>
     </div>
   )

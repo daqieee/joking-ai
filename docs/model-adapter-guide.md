@@ -1,8 +1,8 @@
 # AI 接口使用与新模型接入指南
 
-这份指南面向想给 Joking AI 添加搞笑 AI 的贡献者。当前接口是仓库内部的**浏览器 TypeScript API**：界面调用 `generateReply()`，在本机模拟或运行 GGUF。它没有 HTTP 路由、OpenAI 兼容接口、服务端推理或 API Key，也不是可以只注册一行配置的插件系统。
+这份指南面向想给 Joking AI 添加搞笑 AI 的贡献者。当前接口是仓库内部的**浏览器 TypeScript API**：界面调用 `generateReply()`，在本机模拟或运行 GGUF / ONNX。它没有 HTTP 路由、OpenAI 兼容接口、服务端推理或 API Key，也不是可以只注册一行配置的插件系统。
 
-先运行 [TeapotGPT 开发示例](../examples/teapot/index.html)，再参照本文添加自己的模型。三款现有模型的来源、能力边界与验收记录见[模型集成说明](model-integration.md)；提交 PR 的简明流程见 [CONTRIBUTING.md](../CONTRIBUTING.md)。下文描述当前源码，改动接口时请同时更新指南与示例。
+先运行 [TeapotGPT 开发示例](../examples/teapot/index.html)，再参照本文添加自己的模型。六款现有模型的来源、能力边界与验收记录见[模型集成说明](model-integration.md)；提交 PR 的简明流程见 [CONTRIBUTING.md](../CONTRIBUTING.md)。下文描述当前源码，改动接口时请同时更新指南与示例。
 
 ## 先跑一次 TeapotGPT
 
@@ -21,7 +21,7 @@ Vite 配置会在开发服务启动时预优化 wllama 的 JS 入口，避免首
 - 点击“拟真 · real / GGUF”：实际加载本站 Teapot GGUF，通过 wllama 前向计算返回英文 418 与中文说明。首次除 **102,016 字节的权重**，还会加载推理引擎与 WASM；总下载量大于 102 KB，具体运行时取决于浏览器能力。
 - 运行中点击“停止”，然后再次发送：旧请求不能覆盖新结果；已收到的正文会保留并标为未完成。
 
-示例由 [index.html](../examples/teapot/index.html)、[main.ts](../examples/teapot/main.ts) 和 [style.css](../examples/teapot/style.css) 组成。它直接导入现有 `generateReply()`，没有另写假 provider，也没有把第四款模型加进正式站。`tsconfig.json` 包含 `examples/`，所以 `npm run build` 会检查示例 TypeScript；当前 Vite 生产构建发布工作台与许可证页，**不会把这个开发示例页面输出到 `dist/` 或发布到 GitHub Pages**。
+示例由 [index.html](../examples/teapot/index.html)、[main.ts](../examples/teapot/main.ts) 和 [style.css](../examples/teapot/style.css) 组成。它直接导入现有 `generateReply()`，没有另写假 provider，也没有单独复制正式站模型实现。`tsconfig.json` 包含 `examples/`，所以 `npm run build` 会检查示例 TypeScript；当前 Vite 生产构建发布工作台与许可证页，**不会把这个开发示例页面输出到 `dist/` 或发布到 GitHub Pages**。
 
 ## 调用路径与档位
 
@@ -37,12 +37,12 @@ flowchart LR
 
 入口是 [src/lib/providers.ts](../src/lib/providers.ts)。正式工作台的 [useChat](../src/hooks/useChat.ts) 负责输入校验、请求生命周期、聊天记录和 UI 状态；provider 本身不处理会话列表，也不自动保存结果。
 
-| `reasoningId`                                         | 模式         | 行为                                                                   |
-| ----------------------------------------------------- | ------------ | ---------------------------------------------------------------------- |
-| `low`、`medium`、`high`、`extra`、`extreme`、`absurd` | `simulation` | 六档本地预设台词与延时；不加载权重、WASM 或 wllama。                   |
-| `real`                                                | `wllama`     | 发送时才懒加载推理模块，启动 Worker 并读取模型；选择“拟真”本身不下载。 |
+| `reasoningId`                                         | 模式              | 行为                                                                   |
+| ----------------------------------------------------- | ----------------- | ---------------------------------------------------------------------- |
+| `low`、`medium`、`high`、`extra`、`extreme`、`absurd` | `simulation`      | 六档本地预设台词与延时；不加载权重、WASM 或 wllama。                   |
+| `real`                                                | `wllama` / `onnx` | 发送时才懒加载推理模块，启动 Worker 并读取模型；选择“拟真”本身不下载。 |
 
-这七个 id 是固定的 `ReasoningId` 联合类型；每款模型可以给它们不同的显示名。模拟阶段是作者撰写的娱乐演出，不能表示为真实模型思维链。当前三款拟真模型也都使用固定触发输入：传入 `prompt` 不代表权重会回答这个问题，具体模板在 `getCompletionPlan()` 中。
+这七个 id 是固定的 `ReasoningId` 联合类型；每款模型可以给它们不同的显示名。模拟阶段是作者撰写的娱乐演出，不能表示为真实模型思维链。原有三款拟真模型使用固定触发输入；Acedia、Guppy 与 Miso 使用当前输入（不附带历史），且有各自语言与长度限制：传入 `prompt` 不代表权重会回答这个问题，GGUF 模板在 `getCompletionPlan()` 中，动物模板在 `animal-worker.ts` 中。
 
 ## TypeScript 接口契约
 
@@ -82,7 +82,7 @@ interface ReplyRequest {
 interface ReplyResult {
   content: string
   format: 'text' | 'html'
-  provider: 'simulation' | 'wllama'
+  provider: 'simulation' | 'wllama' | 'onnx'
   stage?: SimulationStage
   incomplete?: boolean
 }
@@ -97,7 +97,7 @@ interface SimulationStage {
 
 `content` 是最终完整返回值，应覆盖流式预览；`format` 决定按文本还是隔离 HTML 预览展示。模拟路径先逐步调用 `onStage`，等阶段延时结束才 resolve，结果带最终 `stage`，没有正文 token 流。阶段台词与最终正文是两个独立字段。
 
-真实路径的 `provider` 为 `wllama`。Worker 根据结束原因标记 `incomplete`，鹈鹕还检查是否出现闭合的 `</html>`；因此成功 resolve 也可能是自然结束但不完整的内容，调用者要保留这个标识。不要把失败当成 `incomplete` 的正常完成，也不要用模拟回复掩盖真实加载或推理错误。
+GGUF 真实路径的 `provider` 为 `wllama`，动物 ONNX 路径为 `onnx`。Worker 根据结束原因标记 `incomplete`，鹈鹕还检查是否出现闭合的 `</html>`；因此成功 resolve 也可能是自然结束但不完整的内容，调用者要保留这个标识。不要把失败当成 `incomplete` 的正常完成，也不要用模拟回复掩盖真实加载或推理错误。
 
 ### 取消、异常与旧请求隔离
 
@@ -195,7 +195,7 @@ npm run test:inference
 
 ## 添加新搞笑 AI 时逐项改什么
 
-当前结构针对三款模型写了若干分支。新增模型应逐项核对下面的文件，而不是复制 Teapot 配置后就算完成。先决定笑点、六档结果规则、真实模型能力及输出格式，再实现。
+当前结构针对六款模型写了若干分支。新增模型应逐项核对下面的文件，而不是复制 Teapot 配置后就算完成。先决定笑点、六档结果规则、真实模型能力及输出格式，再实现。
 
 ### 1. 模型定义与七档
 
@@ -209,7 +209,9 @@ npm run test:inference
 - 给新模型显式增加最终输出规则、`format` 与六档 `SimulationStage`。前六档遵守同一最终输出规则，档位只增加舞台过程与动画：固定预设应保持一致；随机类每次值可以不同，但算法与分布不因档位“增强”。模拟返回 `provider: 'simulation'`、`simulated: true`，正文里不混入阶段台词。
 - 模拟路径保持无 GGUF / WASM / wllama 加载；用阶段与动画表现笑点，别把本地台词说成真实思考。
 
-### 3. 真实 GGUF、模板与 Worker
+### 3. 真实权重、模板与 Worker
+
+新增 ONNX 模型可参考 `src/lib/inference/animals.ts`、`animal-worker.ts` 与 `animal-models.ts`：固定资产 revision 和 SHA-256、单线程 WASM、tokenizer 与上下文边界都须验证。设置 `localModel.runtime: 'ONNX'` 才会展示正确下载说明和消息 provider；`inference.ts` 负责切换运行时后释放旧 Worker。新 runtime 也必须保持模拟路径零权重/引擎请求。
 
 - 在 [src/lib/inference/models.ts](../src/lib/inference/models.ts) 的 `INFERENCE_MODELS` 增加下载 `url`、精确 `bytes`、`nCtx`、`maxTokens` 与 `format`。`InferenceModelId` 从对象 key 自动推导，`isInferenceModelId()` 使用这个表做校验。
 - 明确修改 `getCompletionPlan()`。它当前忽略 `_prompt`：鹈鹕用专用固定模板，另外两款用 `<s>`。新增能回答用户输入的模型必须定义自己的 prompt / chat template、采样参数和上下文预算，不能无意继承“忽略输入”的分支。
@@ -230,7 +232,7 @@ npm run test:inference
 - 更新 [scripts/verify-model-assets.mjs](../scripts/verify-model-assets.mjs) 的资源清单、精确大小与 SHA-256。自制权重提供可复现 builder；不要只把未知来源的 GGUF 放进目录。
 - 在 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md) 记录真实来源、固定版本、许可和本站修改；如果上游只是规则应用或灵感来源，明确说明，别声称存在未提供的 checkpoint。`upstream` 展示字段也应与通知一致。
 - 同步 [src/config/licenses.ts](../src/config/licenses.ts) 的许可页条目，保留项目名称、精确版本或修订、版权、上游链接与完整许可。需要时更新 [NOTICE](../NOTICE)；上游附带 NOTICE 的项目须保留相关通知，本站补充归属说明应清楚标明。本站原创部分采用 [MIT License](../LICENSE)，第三方模型与依赖仍按各自许可使用，不能统一改成本站 MIT。
-- 更新相关单元与浏览器测试。现有 [mock.test.ts](../src/lib/mock.test.ts)、[storage.test.ts](../src/lib/storage.test.ts) 和 [model-integration.spec.ts](../tests/e2e/model-integration.spec.ts) 等存在三模型枚举、数量和结果期望，新增模型时逐项扩展，保留原有三款行为断言。模型实验室、来源链接、首页卡片的测试也要按变更同步，不能仅删掉断言让测试变绿。
+- 更新相关单元与浏览器测试。现有 [mock.test.ts](../src/lib/mock.test.ts)、[storage.test.ts](../src/lib/storage.test.ts) 和 [model-integration.spec.ts](../tests/e2e/model-integration.spec.ts) 等存在六模型枚举、数量和结果期望，新增模型时逐项扩展，保留原有三款行为断言。模型实验室、来源链接、首页卡片的测试也要按变更同步，不能仅删掉断言让测试变绿。
 
 ## 本地验证与 PR 交付
 

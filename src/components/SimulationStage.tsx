@@ -1,8 +1,15 @@
-import { Bird, Coffee, Dices } from 'lucide-react'
+import { Bird, Coffee, Dices, Moon, Fish, Cat } from 'lucide-react'
 import type { SimulationStage as Stage } from '../types'
 
-const icons = { pelican: Bird, random: Dices, teapot: Coffee }
-const scenes = { pelican: '鹈鹕骑行模拟', random: '数字抽签模拟', teapot: '茶壶升温模拟' }
+const icons = { pelican: Bird, random: Dices, teapot: Coffee, acedia: Moon, guppy: Fish, miso: Cat }
+const scenes = {
+  pelican: '鹈鹕骑行模拟',
+  random: '数字抽签模拟',
+  teapot: '茶壶升温模拟',
+  acedia: '摸鱼休假模拟',
+  guppy: '鱼缸冒泡模拟',
+  miso: '纸箱巡逻模拟',
+}
 
 export default function SimulationStage({
   stage,

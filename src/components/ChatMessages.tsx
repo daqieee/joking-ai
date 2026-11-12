@@ -91,8 +91,16 @@ export default function ChatMessages({ messages, pending, failure, onRetry, onTo
                 <span className="message-mode">
                   {legacy ? '旧版模拟' : getReasoning(message.reasoningId ?? '', model.id).name}
                 </span>
-                <span className={`mock-label${message.provider === 'wllama' ? ' real-label' : ''}`}>
-                  {legacy ? '历史记录' : message.provider === 'wllama' ? 'GGUF · 本地推理' : 'MOCK'}
+                <span
+                  className={`mock-label${message.provider === 'wllama' || message.provider === 'onnx' ? ' real-label' : ''}`}
+                >
+                  {legacy
+                    ? '历史记录'
+                    : message.provider === 'wllama'
+                      ? 'GGUF · 本地推理'
+                      : message.provider === 'onnx'
+                        ? 'ONNX · 本地推理'
+                        : 'MOCK'}
                 </span>
               </div>
               {!legacy && message.stage && <SimulationStage stage={message.stage} />}
@@ -122,7 +130,9 @@ export default function ChatMessages({ messages, pending, failure, onRetry, onTo
                     ? '保留的旧记录'
                     : message.provider === 'wllama'
                       ? '浏览器内真实 GGUF 推理'
-                      : '本地预设 · 娱乐演出'}
+                      : message.provider === 'onnx'
+                        ? '浏览器内真实 ONNX 推理'
+                        : '本地预设 · 娱乐演出'}
                 </span>
               </div>
             </div>
@@ -143,7 +153,9 @@ export default function ChatMessages({ messages, pending, failure, onRetry, onTo
                 {getReasoning(pending.reasoningId, pending.modelId).name}
               </span>
               <span className={`mock-label${pending.reasoningId === 'real' ? ' real-label' : ''}`}>
-                {pending.reasoningId === 'real' ? 'GGUF · 本地推理' : 'MOCK'}
+                {pending.reasoningId === 'real'
+                  ? `${getModel(pending.modelId).localModel.runtime ?? 'GGUF'} · 本地推理`
+                  : 'MOCK'}
               </span>
             </div>
             {pending.stage ? (

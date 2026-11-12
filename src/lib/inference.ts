@@ -1,18 +1,28 @@
 import { InferenceCoordinator } from './inference/coordinator'
 import { isInferenceModelId } from './inference/models'
+import { isAnimalModelId } from './inference/animal-models'
+
 import type { InferenceRequest, InferenceResult } from './inference/protocol'
 
 export type { InferenceRequest, InferenceResult } from './inference/protocol'
 
+let animals: typeof import('./inference/animals') | undefined
 let coordinator: InferenceCoordinator | undefined
 
 /** Only called by the seventh (拟真) level; earlier levels never create this worker. */
 export async function generateLocalInference(request: InferenceRequest): Promise<InferenceResult> {
-  if (!isInferenceModelId(request.modelId)) throw new Error('此模型没有可用的本地 GGUF 权重。')
   if (request.signal.aborted) throw new DOMException('已停止本地模型生成', 'AbortError')
   if (typeof Worker === 'undefined' || typeof WebAssembly === 'undefined') {
     throw new Error('此浏览器不支持 Worker / WebAssembly，请使用新版浏览器运行拟真档。')
   }
+  if (isAnimalModelId(request.modelId)) {
+    coordinator?.dispose()
+    coordinator = undefined
+    animals ??= await import('./inference/animals')
+    return animals.generateAnimalInference(request)
+  }
+  animals?.disposeAnimalInference()
+  if (!isInferenceModelId(request.modelId)) throw new Error('此模型没有可用的本地 GGUF 权重。')
   coordinator ??= new InferenceCoordinator(
     () => new Worker(new URL('./inference/worker.ts', import.meta.url), { type: 'module' }),
   )
@@ -23,4 +33,5 @@ export async function generateLocalInference(request: InferenceRequest): Promise
 export function disposeLocalInference() {
   coordinator?.dispose()
   coordinator = undefined
+  animals?.disposeAnimalInference()
 }

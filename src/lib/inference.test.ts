@@ -188,6 +188,17 @@ describe('inference request ownership', () => {
 })
 
 describe('completion boundaries', () => {
+  it('passes Acedia the current prompt and rejects oversize input without truncating', () => {
+    const prompt = 'Tell me a silly excuse.'
+    const plan = getCompletionPlan('acedia', prompt)
+    expect(plan.prompt).toContain(prompt)
+    expect(plan.prompt).toContain('<|im_start|>assistant')
+    expect(plan.max_tokens).toBe(120)
+    expect(plan).toMatchObject({ stop: ['<|im_end|>', '<|im_start|>'] })
+    expect(() => getCompletionPlan('acedia', '🐈'.repeat(600))).not.toThrow()
+    expect(() => getCompletionPlan('acedia', 'x'.repeat(601))).toThrow('600')
+  })
+
   it('keeps every random candidate and avoids numeric-suffix EOS', () => {
     expect(getCompletionPlan('random-number', '100')).toMatchObject({
       prompt: '<s>',

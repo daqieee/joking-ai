@@ -140,6 +140,110 @@ const TEAPOT_STEPS: readonly string[][] = [
   ],
 ]
 
+// These are explicitly labelled site-authored previews, never neural outputs.
+export const CHARACTER_PRESETS = {
+  acedia:
+    '这个问题值得深思。我决定把“深思”安排到明天，今天先负责自信。\n\n（本站摸鱼预设；切到拟真才运行 Acedia。）',
+  guppy:
+    'blub. is that a snack? no? then i will swim one circle and ask again.\n\n（本站小鱼预设；切到拟真才运行 Guppy。）',
+  miso: 'mrrp. the box is mine. your keyboard is also a box, so it is mine too. time for a nap.\n\n（本站猫猫预设；切到拟真才运行 Miso。）',
+} as const
+
+const CHARACTER_STEPS = {
+  acedia: [
+    ['收到任务，先把椅背调整到适合思考的角度。'],
+    ['打开待办清单。', '发现待办清单也是待办。', '决定先休息一下。'],
+    [
+      '评估努力的必要性。',
+      '请努力自行提交申请。',
+      '申请被休息委员会暂缓受理。',
+      '准备本站摸鱼预设。',
+    ],
+    [
+      '已读。',
+      '正在考虑是否回复。',
+      '对回复的回复进行模拟审核。',
+      '审核工作转交明天。',
+      '输出本站摸鱼预设。',
+    ],
+    [
+      '召开负责人会议。',
+      '所有人都指向下一位负责人。',
+      '闭环已经形成，但没人开始工作。',
+      '为闭环颁发高效协作奖。',
+      '奖状由打印机代领。',
+      '预设答案准备完毕。',
+    ],
+    [
+      '宇宙休假委员会开始例会。',
+      '恒星申请停止发光五分钟。',
+      '黑洞建议把任务全部吸走。',
+      '时间提出延期，但被要求明天再来。',
+      '银河进入免打扰模式。',
+      '本次模拟未发生任何模型计算。',
+      '把预设回复放在门口，下班。',
+    ],
+  ],
+  guppy: [
+    ['吐一个想象中的泡泡，准备本站预设。'],
+    ['绕鱼缸游一圈。', '路过同一块石头。', '郑重宣布发现新大陆。'],
+    ['检查水面是否有零食。', '检查水底是否有零食。', '检查问题是否是零食。', '结论：问题不好吃。'],
+    [
+      '鱼缸哲学会议开场。',
+      '议题：水是不是一直这么湿。',
+      '石头没有发言。',
+      '水草表示随波逐流。',
+      '记录预设结论。',
+    ],
+    [
+      '邀请深海代表。',
+      '代表被鱼缸玻璃挡住。',
+      '改为泡泡远程会议。',
+      '会议网络正常冒泡。',
+      '所有结论都关于零食。',
+      '准备本站鱼缸预设。',
+    ],
+    [
+      '把银河登记为公共鱼缸。',
+      '申请给木星投喂一次。',
+      '土星环被认定为大型鱼粮。',
+      '宇航员提出异议，小鱼没听懂。',
+      '宇宙巡视一圈。',
+      '模型没有参与这段模拟台词。',
+      '回到鱼缸，交付本站预设。',
+    ],
+  ],
+  miso: [
+    ['猫醒了，但不完全。准备本站预设。'],
+    ['伸一个懒腰。', '检查键盘温度。', '决定再眯一会。'],
+    ['巡逻纸箱一号。', '巡逻纸箱二号。', '把你的包登记为纸箱三号。', '猫猫领地更新完毕。'],
+    [
+      '猫爪审核开始。',
+      '把文件推到桌沿。',
+      '进行重力兼容测试。',
+      '文件落地，审核通过。',
+      '输出本站猫猫预设。',
+    ],
+    [
+      '宣布沙发归猫所有。',
+      '宣布键盘归猫所有。',
+      '宣布人类手腕归猫所有。',
+      '电脑建议保留使用权。',
+      '建议被踩下退格键。',
+      '统治完成，准备睡觉。',
+    ],
+    [
+      '宇宙午睡计划启动。',
+      '银河被折成一个纸箱。',
+      '星星被批准充当逗猫棒。',
+      '黑洞太吵，要求调低音量。',
+      '把所有会议改成呼噜。',
+      '这些台词由本站预设，不是模型思考。',
+      '交付猫猫预设，正式午休。',
+    ],
+  ],
+} as const
+
 export const TEAPOT_PRESET =
   '418 · 我是一把茶壶。咖啡这个需求很有想法，但本壶的产品路线里只有茶。请自备茶叶，热水管够。'
 export { pelicanPreset as PELICAN_PRESET }
@@ -152,11 +256,14 @@ export function generateMockResponse(
   if (!input.trim()) throw new Error('请先输入一点想说的话')
   const model = getModel(modelId)
   const level = getReasoning(reasoningId, model.id)
-  if (level.id === 'real') throw new Error('拟真档必须使用真实 GGUF provider')
+  if (level.id === 'real') throw new Error('拟真档必须使用真实 GGUF / ONNX provider')
   const index = getReasoningLevels(model.id).findIndex((item) => item.id === level.id)
-  const steps = { pelican: PELICAN_STEPS, random: RANDOM_STEPS, teapot: TEAPOT_STEPS }[
-    model.theatre
-  ][index]
+  const steps = {
+    pelican: PELICAN_STEPS,
+    random: RANDOM_STEPS,
+    teapot: TEAPOT_STEPS,
+    ...CHARACTER_STEPS,
+  }[model.theatre][index]
   const stage: SimulationStage = {
     simulated: true,
     kind: model.theatre,
@@ -169,7 +276,9 @@ export function generateMockResponse(
         ? pelicanPreset
         : model.theatre === 'random'
           ? String(secureRandomNumber())
-          : TEAPOT_PRESET,
+          : model.theatre === 'teapot'
+            ? TEAPOT_PRESET
+            : CHARACTER_PRESETS[model.theatre],
     format: model.theatre === 'pelican' ? 'html' : 'text',
     provider: 'simulation',
     stage,

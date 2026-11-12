@@ -7,6 +7,8 @@ import {
   STORAGE_KEY,
   writeSnapshot,
 } from './storage'
+import { MODELS, getReasoningLevels } from '../config/models'
+import { generateMockResponse } from './mock'
 import type { Conversation } from '../types'
 
 function memoryStorage(initial: string | null = null) {
@@ -31,6 +33,56 @@ function conversation(id = 'chat-1'): Conversation {
 }
 
 describe('browser conversation persistence', () => {
+  it('round-trips all thirty-six simulation stages and all six selected models', () => {
+    for (const model of MODELS) {
+      const chat = { ...conversation(), modelId: model.id }
+      chat.messages = getReasoningLevels(model.id)
+        .slice(0, 6)
+        .map((level, index) => ({
+          id: `answer-${index}`,
+          role: 'assistant' as const,
+          createdAt: index,
+          modelId: model.id,
+          reasoningId: level.id,
+          ...generateMockResponse('hello', model.id, level.id),
+        }))
+      const snapshot = {
+        ...emptySnapshot(),
+        conversations: [chat],
+        activeId: chat.id,
+        modelId: model.id,
+        reasoningId: 'absurd' as const,
+      }
+      const storage = memoryStorage()
+      expect(writeSnapshot(storage, snapshot)).toBe(true)
+      expect(readSnapshot(storage)).toEqual(snapshot)
+    }
+  })
+
+  it.each(['guppy', 'miso'])('preserves real ONNX metadata for %s', (modelId) => {
+    const chat = { ...conversation(), modelId, reasoningId: 'real' as const }
+    chat.messages.push({
+      id: 'onnx-answer',
+      role: 'assistant',
+      createdAt: 2,
+      content: 'hello',
+      modelId,
+      reasoningId: 'real',
+      provider: 'onnx',
+      format: 'text',
+    })
+    const snapshot = {
+      ...emptySnapshot(),
+      conversations: [chat],
+      activeId: chat.id,
+      modelId,
+      reasoningId: 'real' as const,
+    }
+    const storage = memoryStorage()
+    expect(writeSnapshot(storage, snapshot)).toBe(true)
+    expect(readSnapshot(storage)).toEqual(snapshot)
+  })
+
   it('round-trips selected model, mode and long HTML without truncating', () => {
     const storage = memoryStorage()
     const chat = conversation()

@@ -15,7 +15,7 @@ afterEach(() => {
 })
 
 describe('local provider dispatch', () => {
-  it('plays all eighteen simulated processes without invoking inference', async () => {
+  it('plays all thirty-six simulated processes without invoking inference', async () => {
     for (const model of MODELS) {
       for (const level of getReasoningLevels(model.id).slice(0, 6)) {
         const stages: SimulationStage[] = []
@@ -79,6 +79,40 @@ describe('local provider dispatch', () => {
       expect.objectContaining({ modelId: 'teapot-gpt', prompt: '咖啡' }),
     )
   })
+
+  it.each([
+    ['acedia', 'wllama'],
+    ['guppy', 'onnx'],
+    ['miso', 'onnx'],
+  ])('labels genuine %s inference with %s', async (modelId, provider) => {
+    vi.mocked(generateLocalInference).mockResolvedValueOnce({ content: 'hello', format: 'text' })
+    await expect(
+      generateReply({
+        modelId,
+        reasoningId: 'real',
+        prompt: 'hello',
+        signal: new AbortController().signal,
+      }),
+    ).resolves.toEqual({ content: 'hello', format: 'text', provider })
+  })
+
+  it.each(['acedia', 'guppy', 'miso'])(
+    'routes %s real mode without falling back on simulation',
+    async (modelId) => {
+      const failure = new Error('model unavailable')
+      vi.mocked(generateLocalInference).mockRejectedValueOnce(failure)
+      await expect(
+        generateReply({
+          modelId,
+          reasoningId: 'real',
+          prompt: 'hello',
+          signal: new AbortController().signal,
+        }),
+      ).rejects.toBe(failure)
+      expect(generateLocalInference).toHaveBeenCalledOnce()
+      expect(generateLocalInference).toHaveBeenCalledWith(expect.objectContaining({ modelId }))
+    },
+  )
 
   it('never begins inference for a request already cancelled', async () => {
     const controller = new AbortController()

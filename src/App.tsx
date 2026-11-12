@@ -7,6 +7,7 @@ import ChatMessages from './components/ChatMessages'
 import InfoDialog from './components/InfoDialog'
 import { useChat } from './hooks/useChat'
 import { MAX_MESSAGES } from './lib/storage'
+import { getModel } from './config/models'
 
 export default function App() {
   const chat = useChat()
@@ -127,7 +128,9 @@ export default function App() {
           <div className="topbar-right">
             <span className="mock-status">
               <span className="status-dot" />
-              {chat.snapshot.reasoningId === 'real' ? '拟真 · 本地 GGUF' : '模拟模式'}
+              {chat.snapshot.reasoningId === 'real'
+                ? `拟真 · 本地 ${getModel(chat.snapshot.modelId).localModel.runtime ?? 'GGUF'}`
+                : '模拟模式'}
             </span>
             <span className="header-divider" />
             <button

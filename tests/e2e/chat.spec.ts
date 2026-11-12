@@ -93,10 +93,13 @@ test('sends a suggested prompt and restores the conversation after reload', asyn
   await selectModel(page, 'TeapotGPT')
   const firstBatch = await page.locator('.prompt-card .prompt-text').allTextContents()
   let suggestedText = ''
-  for (let batch = 0; batch < 2; batch += 1) {
+  for (let batch = 0; batch < 3; batch += 1) {
     const suggestions = page.locator('.prompt-card')
     await expect(suggestions).toHaveCount(4)
-    for (const [index, model] of ['鹈鹕 PRO', '随机数模型', 'TeapotGPT', '随机数模型'].entries()) {
+    for (const [index, model] of (batch === 2
+      ? ['Acedia 摸鱼助手', 'Guppy 小鱼', 'Miso 猫猫', '随机数模型']
+      : ['鹈鹕 PRO', '随机数模型', 'TeapotGPT', '随机数模型']
+    ).entries()) {
       if (index === 3) await selectModel(page, model)
       const suggestion = suggestions.nth(index)
       suggestedText = (await suggestion.locator('.prompt-text').textContent())!
@@ -108,7 +111,7 @@ test('sends a suggested prompt and restores the conversation after reload', asyn
       ).toBeVisible()
       await expect(page.locator('.user-message')).toHaveCount(0)
     }
-    if (batch === 0) {
+    if (batch < 2) {
       await page.getByRole('button', { name: '换一批', exact: true }).click()
       expect(await page.locator('.prompt-card .prompt-text').allTextContents()).not.toEqual(
         firstBatch,
@@ -241,14 +244,14 @@ test('shows user text literally and copies the exact local response', async ({ p
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(expected)
 })
 
-test('opens the three-model lab, selects a model and exposes help', async ({
+test('opens the six-model lab, selects a model and exposes help', async ({
   page,
   context,
 }, testInfo) => {
-  await page.getByRole('button', { name: /3 位 整活搭子/ }).click()
+  await page.getByRole('button', { name: /6 位 整活搭子/ }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
-  await expect(dialog.locator('.lab-model-card')).toHaveCount(3)
+  await expect(dialog.locator('.lab-model-card')).toHaveCount(6)
   for (const oldName of ['杠精 Pro', '废话大师', '职场嘴替', '猫言猫语']) {
     await expect(dialog.getByRole('button', { name: new RegExp(oldName) })).toHaveCount(0)
   }
@@ -268,6 +271,13 @@ test('opens the three-model lab, selects a model and exposes help', async ({
       url: 'https://github.com/namishsaxena/teapot-gpt',
       license: 'MIT',
     },
+    {
+      name: 'Acedia 摸鱼助手',
+      url: 'https://huggingface.co/embeputer/acedia-1-gguf',
+      license: 'Apache-2.0',
+    },
+    { name: 'Guppy 小鱼', url: 'https://huggingface.co/arman-bd/guppylm-9M', license: 'MIT' },
+    { name: 'Miso 猫猫', url: 'https://huggingface.co/hunt3rx99/meowllm', license: 'MIT' },
   ]) {
     const card = dialog.locator('.lab-model-card').filter({ hasText: model.name })
     const source = card.getByRole('link', { name: `查看 ${model.name} 原项目（新标签页）` })

@@ -93,7 +93,7 @@ export class InferenceCoordinator {
           discard()
           finish(new Error('本地模型 Worker 通信失败，请重试。'))
         }
-        request.onProgress?.('正在准备浏览器内的真实 GGUF 推理…')
+        request.onProgress?.('正在准备浏览器内的真实模型推理…')
         if (signal.aborted || settled) return
         worker.postMessage({ id, modelId: request.modelId, prompt: request.prompt })
         await result.catch(() => {})

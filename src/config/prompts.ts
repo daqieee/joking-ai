@@ -47,4 +47,33 @@ export const PROMPT_SETS = [
     },
     { category: '脑洞开场', text: '请把平凡小事演成一场盛大的仪式', icon: 'orbit', tone: 'blue' },
   ],
+  [
+    {
+      category: '摸鱼助手 · 英文',
+      text: 'Can you help me do absolutely nothing today?',
+      modelId: 'acedia',
+      icon: 'moon',
+      tone: 'lavender',
+    },
+    {
+      category: '鱼缸来信 · 英文',
+      text: 'are you hungry',
+      modelId: 'guppy',
+      icon: 'fish',
+      tone: 'blue',
+    },
+    {
+      category: '猫猫上线 · 英文',
+      text: 'Miso, can I sit in your box?',
+      modelId: 'miso',
+      icon: 'cat',
+      tone: 'rose',
+    },
+    {
+      category: '真实小模型',
+      text: '这些小模型的脑回路可以有多离谱？',
+      icon: 'orbit',
+      tone: 'sand',
+    },
+  ],
 ] as const

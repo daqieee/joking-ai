@@ -1,6 +1,9 @@
 import siteLicense from '../../LICENSE?raw'
 import pelicanNotice from '../../NOTICE?raw'
 import apacheLicense from '../../public/models/LICENSE-pelican-Apache-2.0.txt?raw'
+import misoLicense from '../../public/models/LICENSE-miso-MIT.txt?raw'
+import onnxLicense from '../../public/models/LICENSE-onnxruntime-1.31.1.txt?raw'
+import onnxNotices from '../../public/models/ThirdPartyNotices-onnxruntime-1.31.1.txt?raw'
 
 export interface LicenseEntry {
   id: string
@@ -16,7 +19,7 @@ export interface LicenseEntry {
 
 export const SITE_LICENSE: string = siteLicense
 export const PELICAN_NOTICE: string = pelicanNotice
-export const LICENSE_CHECKED_DATE = '2026-10-25'
+export const LICENSE_CHECKED_DATE = '2026-11-10'
 
 const MIT_TERMS = `Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -127,6 +130,79 @@ export const LICENSE_ENTRIES: readonly LicenseEntry[] = [
     projectUrl: 'https://github.com/daqieee/joking-ai',
     licenseUrl: 'https://github.com/daqieee/joking-ai/blob/main/LICENSE',
     licenseTexts: [{ label: '本站 MIT License 全文', text: SITE_LICENSE }],
+  },
+  {
+    id: 'acedia',
+    name: 'Acedia-1 · embeputer/acedia-1-gguf',
+    license: 'Apache-2.0',
+    version: '2f1784c2a9d7fdfe31eb72c576ec245ffd99ba18',
+    copyright: [
+      '模型发布者：embeputer；底座：HuggingFaceTB/SmolLM2-135M-Instruct。上游未声明独立版权年份。',
+    ],
+    description:
+      '按需下载未修改的 acedia1v3-q4_k_m.gguf。发布者将其描述为懒惰、故意答错的 135M 微调娱乐模型；模型卡与 SmolLM2 底座均声明 Apache-2.0。固定修订未附独立 LICENSE 或 NOTICE；本站保留标准许可全文与来源，不将模拟档文案冒充上游模型输出。',
+    projectUrl: 'https://huggingface.co/embeputer/acedia-1-gguf',
+    licenseUrl:
+      'https://huggingface.co/embeputer/acedia-1-gguf/blob/2f1784c2a9d7fdfe31eb72c576ec245ffd99ba18/README.md',
+    licenseTexts: [{ label: 'Apache License 2.0 全文', text: apacheLicense }],
+  },
+  {
+    id: 'guppy',
+    name: 'GuppyLM · arman-bd/guppylm-9M',
+    license: 'MIT（上游模型卡声明）',
+    version: '5f09d63fae6f5049bd2360d690f01b68a63d837b',
+    copyright: ['作者与发布者：arman-bd。上游模型卡未提供独立版权行；本站不补写版权年份。'],
+    description:
+      '小鱼 Guppy 人格模型，按需加载上游原始 ONNX 与 tokenizer.json。模型卡和源仓库 README 均声明 MIT；核查时源仓库独立 LICENSE 链接返回 404，因此许可依据为模型卡声明。下列为标准 MIT 条款，不冒称不存在的上游 LICENSE 文件原文。',
+    projectUrl: 'https://huggingface.co/arman-bd/guppylm-9M',
+    licenseUrl:
+      'https://huggingface.co/arman-bd/guppylm-9M/blob/5f09d63fae6f5049bd2360d690f01b68a63d837b/README.md',
+    licenseTexts: [
+      { label: 'MIT 标准许可条款（依据上游声明）', text: `MIT License\n\n${MIT_TERMS}` },
+    ],
+  },
+  {
+    id: 'miso',
+    name: 'Miso · MeowLLM / phruut ONNX 转换',
+    license: 'MIT',
+    version: '9697a86134592e88e433f77d31f4e4498ef6eba4',
+    copyright: [
+      'Copyright (c) 2026 phanii9',
+      '原始模型发布：hunt3rx99/meowllm；ONNX 转换发布：phruut/meowllm-onnx。',
+    ],
+    description:
+      '猫 Miso 人格来自 MeowLLM 原始训练权重。本站按需加载 phruut 发布的未修改 ONNX、外部数据与分词器；原模型与转换模型卡均声明 MIT。转换仓库未提供额外版权行，本站保留 phanii9 原始 MIT 全文并单独标明转换作者。',
+    projectUrl: 'https://huggingface.co/phruut/meowllm-onnx',
+    licenseUrl:
+      'https://github.com/phanii9/MeowLLM/blob/d267a6c89bd978150ff9760ba77a37e7cee6601a/LICENSE',
+    licenseTexts: [{ label: 'MeowLLM 原始 MIT License 全文', text: misoLicense }],
+  },
+  {
+    id: 'onnxruntime-web',
+    name: 'ONNX Runtime Web · onnxruntime-web',
+    license: 'MIT；内含组件分别沿用第三方通知',
+    version: '1.31.1',
+    copyright: ['Copyright (c) Microsoft Corporation'],
+    description:
+      '在 Worker 中执行 Guppy 与 Miso 的真实 ONNX 推理。npm 安装包声明 MIT；本站从官方 v1.31.1 源码标签保留 LICENSE 与未删节 ThirdPartyNotices.txt。该通知覆盖上游项目的第三方材料，不代表其中每个可选组件均被本站加载。',
+    projectUrl: 'https://github.com/microsoft/onnxruntime/tree/v1.31.1/js/web',
+    licenseUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.1/LICENSE',
+    licenseTexts: [
+      { label: 'ONNX Runtime MIT License 全文', text: onnxLicense },
+      { label: 'ONNX Runtime 第三方通知全文（英文原文）', text: onnxNotices },
+    ],
+  },
+  {
+    id: 'onnxruntime-common',
+    name: 'ONNX Runtime Common · onnxruntime-common',
+    license: 'MIT',
+    version: '1.31.1',
+    copyright: ['Copyright (c) Microsoft Corporation'],
+    description:
+      'onnxruntime-web 的 JavaScript 公共 API 依赖。采用同一官方 v1.31.1 MIT 许可；适用的上游第三方通知全文与 ONNX Runtime Web 条目一同保留。',
+    projectUrl: 'https://github.com/microsoft/onnxruntime/tree/v1.31.1/js/common',
+    licenseUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.1/LICENSE',
+    licenseTexts: [{ label: 'ONNX Runtime MIT License 全文', text: onnxLicense }],
   },
   {
     id: 'wllama',

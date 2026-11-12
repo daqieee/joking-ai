@@ -15,6 +15,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:models": "node scripts/build-teapot-model.mjs --check && node scripts/verify-model-assets.mjs",
+    "test:inference:added": "node scripts/smoke-added-models.mjs",
     "test:inference": "node scripts/smoke-inference.mjs",
     "test:inference:pelican": "node scripts/smoke-inference.mjs --pelican-only",
     "test:inference:upstream": "node scripts/smoke-inference.mjs --upstream-only",
@@ -25,6 +26,7 @@
     "@wllama/wllama": "3.8.1",
     "@wllama/wllama-compat": "3.8.1",
     "lucide-react": "^0.468.0",
+    "onnxruntime-web": "1.31.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

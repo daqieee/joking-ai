@@ -2,9 +2,19 @@ export const PELICAN_REVISION = '6981d554c08a3727d960c9dbbd345af887f643e9'
 export const PELICAN_BYTES = 167_846_208
 export const PELICAN_URL = `https://huggingface.co/0v0ai/0u0-pelican-pro-0.2B-GGUF/resolve/${PELICAN_REVISION}/0u0-pelican-pro-v2-Q4_K_M.gguf`
 
+export const ACEDIA_REVISION = '2f1784c2a9d7fdfe31eb72c576ec245ffd99ba18'
+export const ACEDIA_URL = `https://huggingface.co/embeputer/acedia-1-gguf/resolve/${ACEDIA_REVISION}/acedia1v3-q4_k_m.gguf`
+
 const base = import.meta.env.BASE_URL
 
 export const INFERENCE_MODELS = {
+  acedia: {
+    url: ACEDIA_URL,
+    bytes: 105_453_984,
+    nCtx: 4096,
+    maxTokens: 120,
+    format: 'text',
+  },
   'random-number': {
     url: `${base}models/random-num100-Q4_K_M.gguf`,
     bytes: 425_888,
@@ -38,7 +48,7 @@ export function isInferenceModelId(modelId: string): modelId is InferenceModelId
   return Object.hasOwn(INFERENCE_MODELS, modelId)
 }
 
-export function getCompletionPlan(modelId: InferenceModelId, _prompt: string) {
+export function getCompletionPlan(modelId: InferenceModelId, userPrompt: string) {
   const shared = {
     max_tokens: INFERENCE_MODELS[modelId].maxTokens,
     top_p: 1,
@@ -48,6 +58,20 @@ export function getCompletionPlan(modelId: InferenceModelId, _prompt: string) {
     penalty_present: 0,
     presence_penalty: 0,
     frequency_penalty: 0,
+  }
+  if (modelId === 'acedia') {
+    // Conservative UTF-8 byte bound leaves room within its 4096-token context.
+    // Do not silently discard part of a user's message.
+    if (Array.from(userPrompt).length > 600)
+      throw new Error('Acedia 拟真档每次最多 600 个字符，请缩短消息；它更适合英文短句。')
+    return {
+      ...shared,
+      prompt: `<|im_start|>system\nYou are Acedia-1, a lazy, silly fictional assistant. Give short, absurd answers for entertainment.\n<|im_end|>\n<|im_start|>user\n${userPrompt}<|im_end|>\n<|im_start|>assistant\n`,
+      temperature: 0.7,
+      top_k: 40,
+      top_p: 0.9,
+      stop: ['<|im_end|>', '<|im_start|>'],
+    }
   }
   return modelId === 'pelican-pro'
     ? {

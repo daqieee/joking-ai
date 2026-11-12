@@ -30,7 +30,7 @@ function isStage(value: unknown): value is SimulationStage {
   return (
     isObject(value) &&
     value.simulated === true &&
-    ['pelican', 'random', 'teapot'].includes(String(value.kind)) &&
+    ['pelican', 'random', 'teapot', 'acedia', 'guppy', 'miso'].includes(String(value.kind)) &&
     typeof value.level === 'number' &&
     Number.isInteger(value.level) &&
     value.level >= 1 &&
@@ -55,7 +55,8 @@ function isMessage(value: unknown): value is Message {
     (value.format === undefined || value.format === 'html' || value.format === 'text') &&
     (value.provider === undefined ||
       value.provider === 'simulation' ||
-      value.provider === 'wllama') &&
+      value.provider === 'wllama' ||
+      value.provider === 'onnx') &&
     (value.incomplete === undefined || typeof value.incomplete === 'boolean') &&
     (value.legacy === undefined || typeof value.legacy === 'boolean') &&
     (value.stage === undefined || isStage(value.stage))

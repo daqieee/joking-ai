@@ -28,6 +28,7 @@ scope.onmessage = async ({ data: request }) => {
   try {
     if (!isInferenceModelId(modelId)) throw new Error('没有此模型的 GGUF 权重。')
     const model = INFERENCE_MODELS[modelId]
+    const completionPlan = getCompletionPlan(modelId, prompt)
     if (!instance || loadedModel !== modelId) {
       await instance?.exit()
       loadedModel = undefined
@@ -58,7 +59,9 @@ scope.onmessage = async ({ data: request }) => {
           : {}),
         // A fixed BOS template also protects these input-independent toy models
         // if a future caller switches to the chat-completion API.
-        ...(modelId !== 'pelican-pro' ? { chat_template: '{{ bos_token }}' } : {}),
+        ...(['random-number', 'teapot-gpt'].includes(modelId)
+          ? { chat_template: '{{ bos_token }}' }
+          : {}),
         progressCallback: ({ loaded, total }: { loaded: number; total: number }) => {
           const percent = total > 0 ? Math.floor((loaded / total) * 100) : -1
           if (percent !== lastPercent) {
@@ -73,7 +76,9 @@ scope.onmessage = async ({ data: request }) => {
       progress(
         modelId === 'pelican-pro'
           ? '正在下载或读取鹈鹕权重（约 168 MB）；32K 上下文的 Q8 KV 缓存另需约 1.06 GiB…'
-          : '正在读取微型 GGUF 权重…',
+          : modelId === 'acedia'
+            ? '正在下载或读取 Acedia 权重（约 105 MB）；英文整活小模型，不适合可靠问答…'
+            : '正在读取微型 GGUF 权重…',
       )
       // wllama verifies cached file size and deletes partial failed downloads.
       // It caches in OPFS (with an IndexedDB fallback), independent of localStorage.
@@ -93,7 +98,7 @@ scope.onmessage = async ({ data: request }) => {
     let chunks = 0
     let lastUpdate = 0
     await instance.createCompletion({
-      ...getCompletionPlan(modelId, prompt),
+      ...completionPlan,
       stream: true,
       return_progress: true,
       onData: (chunk: RawCompletionChunk) => {

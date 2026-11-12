@@ -70,6 +70,69 @@ export const MODELS: readonly ModelDefinition[] = [
         '本站独立手写权重的微型模型，未训练、不具备语义理解；拟真档通过 wllama 实际前向计算，输出 418。首次发送加载 102,016 字节。',
     },
   },
+  {
+    id: 'acedia',
+    name: 'Acedia 摸鱼助手',
+    version: '135M',
+    subtitle: '努力是不可能努力的，回答全凭自信。',
+    description:
+      '真正微调过的懒散小模型。六档是本站摸鱼预设，拟真档运行上游 135M GGUF；英文优先，答案不可靠，仅供娱乐。',
+    tag: '摸鱼专业 · 自信胡说',
+    icon: 'sleepy',
+    tone: 'lavender',
+    thinking: '正在申请把这个问题交给明天',
+    theatre: 'acedia',
+    upstream: { url: 'https://huggingface.co/embeputer/acedia-1-gguf', license: 'Apache-2.0' },
+    localModel: {
+      size: '约 105 MB',
+      runtime: 'GGUF',
+      provenance: '上游微调模型 · Q4_K_M',
+      description:
+        '首次加载 105,453,984 字节，浏览器 CPU 推理。英文优先，每次最多 600 个字符，只处理本轮输入，不读取聊天历史；可能胡说或重复，不能当作事实或建议。',
+    },
+  },
+  {
+    id: 'guppy',
+    name: 'Guppy 小鱼',
+    version: '9M',
+    subtitle: '世界很大，但它只关心水和零食。',
+    description:
+      '真正训练的 8.7M 英文小鱼模型。六档是本站鱼缸预设，拟真档用原项目 ONNX 权重在浏览器生成短回复；不懂复杂任务。',
+    tag: '鱼缸哲学 · 吐个泡泡',
+    icon: 'fish',
+    tone: 'sage',
+    thinking: '正在把问题绕着鱼缸游一圈',
+    theatre: 'guppy',
+    upstream: { url: 'https://huggingface.co/arman-bd/guppylm-9M', license: 'MIT' },
+    localModel: {
+      size: '约 11 MB',
+      runtime: 'ONNX',
+      provenance: '原项目训练权重 · 量化 ONNX',
+      description:
+        '首次加载约 11 MB 模型与词表，另需 ONNX 运行时。请用简短小写英文，避免中文、表情和不常见标点；只处理当前输入。128 token 上下文，输入含格式最多 64 token，过长会提示缩短。可能重复或答非所问，纯属娱乐。',
+    },
+  },
+  {
+    id: 'miso',
+    name: 'Miso 猫猫',
+    version: '3.45M',
+    subtitle: '纸箱是宇宙中心，午睡是终极目标。',
+    description:
+      '真正训练的微型英文猫模型，只有约 345 万参数。六档是本站猫猫预设，拟真档运行公开 ONNX 转换权重；语言能力非常有限。',
+    tag: '猫生大事 · 先睡再说',
+    icon: 'cat',
+    tone: 'peach',
+    thinking: '正在等猫从键盘上醒来',
+    theatre: 'miso',
+    upstream: { url: 'https://huggingface.co/hunt3rx99/meowllm', license: 'MIT' },
+    localModel: {
+      size: '约 14 MB',
+      runtime: 'ONNX',
+      provenance: 'meowllm 训练权重 · 社区 ONNX 转换',
+      description:
+        '首次加载约 14 MB 权重与词表，另需 ONNX 运行时；转换来源 phruut/meowllm-onnx。英文短句优先，输入会转为小写，只处理本轮输入；256 token 上下文，输入含格式最多 160 token。训练有限，可能不连贯，不能当作可靠助手。',
+    },
+  },
 ]
 
 const LEVEL_IDS: readonly ReasoningId[] = [
@@ -85,18 +148,57 @@ const LEVEL_IDS: readonly ReasoningId[] = [
 function theatreLevels(
   names: readonly string[],
   descriptions: readonly string[],
+  runtime = 'GGUF',
 ): readonly ReasoningLevel[] {
   return LEVEL_IDS.map((id, index) => ({
     id,
     name: names[index],
     description: descriptions[index],
-    detail: index === 6 ? '真实 GGUF' : `模拟 ${index + 1} 档`,
+    detail: index === 6 ? `真实 ${runtime}` : `模拟 ${index + 1} 档`,
     points: index + 1,
     delay: [600, 1450, 2200, 2900, 3700, 4900, 0][index],
   }))
 }
 
 const MODEL_REASONING_LEVELS: Readonly<Record<string, readonly ReasoningLevel[]>> = {
+  acedia: theatreLevels(
+    ['歇会儿', '摸鱼', '躺平', '已读不回', '甩锅大师', '宇宙休假', '拟真'],
+    [
+      '先休息，再展示预设',
+      '认真地不认真工作',
+      '把努力从计划里移除',
+      '对消息举行已读仪式',
+      '为问题寻找下一位负责人',
+      '让整个宇宙替它上班',
+      '下载约 105 MB，真实英文小模型',
+    ],
+  ),
+  guppy: theatreLevels(
+    ['小泡泡', '游一圈', '找零食', '鱼缸哲学', '深海会议', '宇宙鱼缸', '拟真'],
+    [
+      '准备一条本站鱼缸预设',
+      '绕鱼缸思考一圈',
+      '检查每一颗不存在的饲料',
+      '认真讨论水为什么湿',
+      '召集想象中的海洋代表',
+      '把银河当成一条大鱼缸',
+      '下载约 11 MB，真实英文小鱼模型',
+    ],
+    'ONNX',
+  ),
+  miso: theatreLevels(
+    ['眯一会', '伸懒腰', '巡逻纸箱', '猫爪审核', '全屋制霸', '宇宙午睡', '拟真'],
+    [
+      '准备一条本站猫猫预设',
+      '先伸懒腰，再假装工作',
+      '检查纸箱的战略价值',
+      '让爪子替大脑签字',
+      '把所有键盘登记为猫床',
+      '宣布银河进入午休时间',
+      '下载约 14 MB，真实英文猫猫模型',
+    ],
+    'ONNX',
+  ),
   'pelican-pro': theatreLevels(
     ['瘦', '中', '肥', '很肥', '特别肥', '超级无敌肥', '拟真'],
     [

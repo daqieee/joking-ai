@@ -30,6 +30,17 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      - name: Verify real added-model browser inference
+        run: npm run test:inference:added
+        timeout-minutes: 12
+      - name: Upload real inference evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: added-models-inference
+          path: test-results/added-models/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Upload browser diagnostics on failure
         if: failure()
         uses: actions/upload-artifact@v4

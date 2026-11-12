@@ -52,7 +52,11 @@ test('direct access and refresh show complete attributions without loading model
     if (response.status() >= 400) failedResources.push(response.url())
   })
   page.on('request', (request) => {
-    if (/\.(?:gguf|wasm)(?:\?|$)|\/wllama|\/inference[^/]*\.js(?:\?|$)/i.test(request.url())) {
+    if (
+      /\.(?:gguf|onnx|wasm)(?:\?|$)|\/wllama|onnxruntime|\/inference[^/]*\.js(?:\?|$)/i.test(
+        request.url(),
+      )
+    ) {
       forbiddenRequests.push(request.url())
     }
   })
@@ -68,6 +72,14 @@ test('direct access and refresh show complete attributions without loading model
   await page.getByText('查看本站 MIT 许可全文', { exact: true }).click()
   await expect(page.locator('#site-license pre')).toContainText('Permission is hereby granted')
   await expect(page.locator('#site-license pre')).toContainText('Joking AI contributors')
+  for (const [id, expected] of [
+    ['acedia', 'Apache-2.0'],
+    ['guppy', 'MIT'],
+    ['miso', 'phanii9'],
+    ['onnxruntime-web', 'Microsoft Corporation'],
+  ]) {
+    await expect(page.locator(`#project-${id}`)).toContainText(expected)
+  }
   const pelican = page.locator('#project-pelican-pro')
   await expect(pelican).toContainText('Apache-2.0')
   await expect(pelican).toContainText('0v0ai')

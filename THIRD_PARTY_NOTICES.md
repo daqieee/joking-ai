@@ -1,6 +1,6 @@
 # 第三方资源与模型通知
 
-许可与归属整理日期：2026-10-25；下列模型字节、哈希与推理核对记录日期仍为 2026-10-24。模型文件保持原字节；SHA-256 针对实际文件，不是文件名或 Git blob id。本站不提供外部模型推理服务，拟真发送时才加载权重。执行 `npm run test:models` 核对两份随站模型；存在鹈鹕缓存时，执行 `node scripts/verify-model-assets.mjs --pelican` 核对三份模型及 GGUF 元数据。
+许可与归属整理日期：2026-11-10；原三款模型的历史核对记录日期仍为 2026-10-24，新增模型单独列于下文。模型文件保持原字节；SHA-256 针对实际文件，不是文件名或 Git blob id。本站不提供外部模型推理服务，拟真发送时才加载权重。执行 `npm run test:models` 核对两份随站模型；存在鹈鹕缓存时，执行 `node scripts/verify-model-assets.mjs --pelican` 核对三份模型及 GGUF 元数据。
 
 本站原创代码、文档、静态预设与独立 Teapot 权重及生成器采用根目录 [LICENSE](LICENSE) 的 MIT License，Copyright (c) 2026 Joking AI contributors。第三方作品保留本文件列明的独立许可和版权；本站 MIT 不替换上游条款。[站内第三方许可页](https://daqieee.github.io/joking-ai/licenses/)以 [src/config/licenses.ts](src/config/licenses.ts) 为数据源，随构建提供完整许可文本，查看页面不会加载模型。
 
@@ -28,7 +28,54 @@ https://huggingface.co/0v0ai/0u0-pelican-pro-0.2B-GGUF/resolve/6981d554c08a3727d
 
 随机数模型的手写、零注意力残差流构造启发了本站 Teapot 的独立实现，已保留李杰的 MIT 通知。Teapot 的文本依次经过真实矩阵计算输出，固定结果不代表语义理解或训练。`namishsaxena/teapot-gpt` 是 [HTTP 418 规则与词库应用](https://github.com/namishsaxena/teapot-gpt)，其 [LICENSE](https://github.com/namishsaxena/teapot-gpt/blob/main/LICENSE) 为 MIT，Copyright (c) 2026 Namish Saxena。本站没有把该项目转换成神经网络权重，也没有使用其不存在的模型 checkpoint。
 
+## 新增模型：Acedia、Guppy 与 Miso
+
+以下来源、固定修订及许可于 **2026-11-10** 核查。模型与分词器按需从 Hugging Face 下载，不随仓库或构建分发；本站没有训练或修改这些上游权重。前六档本地模拟是本站独立娱乐文案，不是上游模型输出。训练背景、能力与示例仅代表发布者声明，本站实际验收另见 [新增模型说明](docs/added-models.md) 和 [动物模型说明](docs/animal-models.md)。
+
+### Acedia-1
+
+发布者为 **embeputer**，底座为 **HuggingFaceTB/SmolLM2-135M-Instruct**。[固定模型卡](https://huggingface.co/embeputer/acedia-1-gguf/blob/2f1784c2a9d7fdfe31eb72c576ec245ffd99ba18/README.md)和[底座模型卡](https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md)均声明 Apache-2.0。Acedia 发布者将其描述为懒惰、故意答错的 135M 微调模型，不应据其输出做真实决策。
+
+- 模型文件：`acedia1v3-q4_k_m.gguf`，105,453,984 字节。
+- revision：`2f1784c2a9d7fdfe31eb72c576ec245ffd99ba18`。
+- SHA-256：`2371c959a0afae96bfe9a0075996a1e055667563b86c37a0bf7999dbb26e356a`。
+- [固定文件来源](https://huggingface.co/embeputer/acedia-1-gguf/blob/2f1784c2a9d7fdfe31eb72c576ec245ffd99ba18/acedia1v3-q4_k_m.gguf)。
+
+固定修订未附独立 LICENSE、NOTICE 或版权年份；本站不捏造上游通知。完整 Apache-2.0 标准条款复用随站的 [Apache License 2.0 全文](public/models/LICENSE-pelican-Apache-2.0.txt)，文件名来自较早的鹈鹕接入，但内容是未修改的标准许可，不限于鹈鹕。本站归属说明不替换或增加上游许可条件。
+
+### GuppyLM
+
+作者与发布者为 **arman-bd**。[固定模型卡](https://huggingface.co/arman-bd/guppylm-9M/blob/5f09d63fae6f5049bd2360d690f01b68a63d837b/README.md)及[源仓库 README](https://github.com/arman-bd/guppylm)均明确声明 MIT。核查时仓库 README 的独立 LICENSE 链接返回 404，根目录也无该文件；因此本项目明确以模型卡的 MIT 声明为许可依据，不声称取得了不存在的上游 LICENSE 全文，也不补造版权行或年份。本站保留作者归属、来源及本文件和站内许可页中的标准 MIT 条款。
+
+固定 revision 为 `5f09d63fae6f5049bd2360d690f01b68a63d837b`：
+
+| 文件             |       字节 | SHA-256                                                            |
+| ---------------- | ---------: | ------------------------------------------------------------------ |
+| `model.onnx`     | 10,469,869 | `96dd79d233662b65bc0fae1773821479551d1c1257ca5bbd12fa3e6623ae4835` |
+| `tokenizer.json` |    160,605 | `b03b0b94a723f4c6757a39836f2755adb5a240e40017b089ba1820f51da6c92a` |
+
+该 ONNX 已包含权重，不需要模型库中另列的 `model_fp32.onnx.data`。本站仅采用权重与分词器，不执行模型库中的 Python 文件。
+
+### Miso / MeowLLM 与 phruut 转换
+
+原始作者为 **phanii9**，模型发布为 **hunt3rx99/meowllm**；ONNX 转换发布者为 **phruut**。[原模型卡](https://huggingface.co/hunt3rx99/meowllm/blob/f3a3f6ef7e2697e1346729f65d1e44bb3df31de8/README.md)与[转换模型卡](https://huggingface.co/phruut/meowllm-onnx/blob/9697a86134592e88e433f77d31f4e4498ef6eba4/README.md)均声明 MIT。转换卡明确指向原模型，未添加独立版权行或额外条款。
+
+原始 [MIT LICENSE](https://github.com/phanii9/MeowLLM/blob/d267a6c89bd978150ff9760ba77a37e7cee6601a/LICENSE)包含 `Copyright (c) 2026 phanii9`，全文原样保存在 [LICENSE-miso-MIT.txt](public/models/LICENSE-miso-MIT.txt) 并随站显示。本站保留原作者版权，另注明 phruut 的转换贡献，不编造 phruut 的版权年份。本站下载并使用的是该转换版本，而不是声称自行转换或训练。
+
+ONNX 固定 revision 为 `9697a86134592e88e433f77d31f4e4498ef6eba4`：
+
+| 文件              |       字节 | SHA-256                                                            |
+| ----------------- | ---------: | ------------------------------------------------------------------ |
+| `model.onnx`      |    436,607 | `c6e0902dd9d6c453e842573c6d64779f76f93f2d05eeaf5d0b69a61e31a8236d` |
+| `model.onnx.data` | 13,846,528 | `0a370100163f43d0f893c7bf47ff8e9c9267dc6790e8fb3fa080c6669320167d` |
+| `tokenizer.json`  |    100,761 | `874f76a917ca3ccba0fe7253bb08688df0d977a5e1a423ccc27c419c093a4332` |
+
+模型及外部权重合计 14,283,135 字节，分词器另计。原始模型 revision 为 `f3a3f6ef7e2697e1346729f65d1e44bb3df31de8`。
+
 ## 浏览器运行时及界面依赖
+
+- **onnxruntime-web 1.31.1** 与 **onnxruntime-common 1.31.1**：Microsoft ONNX Runtime 的浏览器计算运行时与公共 JavaScript API，采用 MIT，`Copyright (c) Microsoft Corporation`。npm 包元数据声明 MIT，但安装包不含独立 LICENSE；本站从官方 **v1.31.1** 源码标签取得 [LICENSE](https://github.com/microsoft/onnxruntime/blob/v1.31.1/LICENSE) 与 [ThirdPartyNotices.txt](https://github.com/microsoft/onnxruntime/blob/v1.31.1/ThirdPartyNotices.txt)，分别原样保存为 [LICENSE-onnxruntime-1.31.1.txt](public/models/LICENSE-onnxruntime-1.31.1.txt) 和 [ThirdPartyNotices-onnxruntime-1.31.1.txt](public/models/ThirdPartyNotices-onnxruntime-1.31.1.txt)。两份全文均随站打包、在许可页显示；第三方通知保持英文原文，不删节、不翻译。它覆盖上游项目的第三方材料，不代表本站加载其中所有可选组件。
+- ONNX 官方 LICENSE 为 1,073 字节，SHA-256 `2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c`；ThirdPartyNotices 为 338,088 字节，SHA-256 `143764b952fdb1a7c69ce653bfba74a7744d6a8a573bfb73e235fba356c83de3`。依赖及 WASM 的实际版本由 `package-lock.json` 固定，不以更新后的主分支许可文本冒充该版本。
 
 - [`@wllama/wllama`](https://github.com/ngxson/wllama) 与 `@wllama/wllama-compat` 固定为 **3.8.1**，[MIT](https://github.com/ngxson/wllama/blob/master/LICENCE)，Copyright (c) 2024 Xuan Son NGUYEN。构建器将原包的 JS/WASM 打包到带哈希的 `assets/`，包括 8,763,949 字节的标准 WASM 和 16,005,007 字节的兼容 WASM。本站固定 CPU 单线程；本次 Chromium 在未跨域隔离时实际加载标准 WASM。另捆绑兼容资源供 wllama 在缺少 JSPI 的浏览器中选择，不将该路径视为已完成 Firefox / Safari 实测。
 - wllama 内的 [llama.cpp / ggml](https://github.com/ggml-org/llama.cpp/blob/master/LICENSE) 使用 MIT，Copyright (c) 2023-2026 The ggml authors。
@@ -45,6 +92,8 @@ https://huggingface.co/0v0ai/0u0-pelican-pro-0.2B-GGUF/resolve/6981d554c08a3727d
 Copyright (c) 2026 李杰 (Jie Li)
 Copyright (c) 2026 Namish Saxena
 Copyright (c) 2026 Joking AI contributors
+Copyright (c) 2026 phanii9
+Copyright (c) Microsoft Corporation
 Copyright (c) 2024 Xuan Son NGUYEN
 Copyright (c) 2023-2026 The ggml authors
 Copyright (c) Meta Platforms, Inc. and affiliates.

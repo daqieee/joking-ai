@@ -108,7 +108,7 @@ export default function Picker({ kind, value, modelId, open, onToggle, onClose, 
         <div className="picker-popover" style={position}>
           <div className="picker-heading">
             <span>{isModel ? '选择你的整活搭子' : '推理强度'}</span>
-            <span>{isModel ? '三款模型' : '六档模拟 + 拟真'}</span>
+            <span>{isModel ? `${MODELS.length} 款模型` : '六档模拟 + 拟真'}</span>
           </div>
           <div className="picker-options" role="listbox" aria-label={label} id={id}>
             {isModel
@@ -164,7 +164,7 @@ export default function Picker({ kind, value, modelId, open, onToggle, onClose, 
                 ))}
           </div>
           {!isModel && (
-            <p className="picker-note">前六档为假装推理的模拟演出；拟真档发送后加载 GGUF。</p>
+            <p className="picker-note">前六档为假装推理的模拟演出；拟真档发送后加载真实模型。</p>
           )}
         </div>
       )}

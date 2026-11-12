@@ -1,7 +1,7 @@
 export type ReasoningId = 'low' | 'medium' | 'high' | 'extra' | 'extreme' | 'absurd' | 'real'
-export type ModelIcon = 'bird' | 'dice' | 'teapot'
+export type ModelIcon = 'bird' | 'dice' | 'teapot' | 'sleepy' | 'fish' | 'cat'
 export type ModelTone = 'sage' | 'peach' | 'lavender'
-export type TheatreKind = 'pelican' | 'random' | 'teapot'
+export type TheatreKind = 'pelican' | 'random' | 'teapot' | 'acedia' | 'guppy' | 'miso'
 
 export interface ReasoningLevel {
   id: ReasoningId
@@ -28,6 +28,7 @@ export interface ModelDefinition {
     license: string
   }
   localModel: {
+    runtime?: 'GGUF' | 'ONNX'
     size: string
     provenance: string
     description: string
@@ -45,7 +46,7 @@ export interface SimulationStage {
 export interface ReplyResult {
   content: string
   format: 'text' | 'html'
-  provider: 'simulation' | 'wllama'
+  provider: 'simulation' | 'wllama' | 'onnx'
   stage?: SimulationStage
   incomplete?: boolean
 }
@@ -58,7 +59,7 @@ export interface Message {
   modelId?: string
   reasoningId?: ReasoningId
   format?: 'text' | 'html'
-  provider?: 'simulation' | 'wllama'
+  provider?: 'simulation' | 'wllama' | 'onnx'
   stage?: SimulationStage
   incomplete?: boolean
   legacy?: boolean

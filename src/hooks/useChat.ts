@@ -90,7 +90,7 @@ export function useChat() {
     appendReply(current, {
       content: current.content,
       format: current.modelId === 'pelican-pro' ? 'html' : 'text',
-      provider: 'wllama',
+      provider: getModel(current.modelId).localModel.runtime === 'ONNX' ? 'onnx' : 'wllama',
       incomplete: true,
     })
   }

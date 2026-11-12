@@ -1,9 +1,17 @@
-import { ArrowRight, Bird, Coffee, Dices, Orbit, RotateCw } from 'lucide-react'
+import { ArrowRight, Bird, Coffee, Dices, Orbit, RotateCw, Moon, Fish, Cat } from 'lucide-react'
 import { useState } from 'react'
 import { PROMPT_SETS } from '../config/prompts'
 import { MODELS } from '../config/models'
 
-const icons = { coffee: Coffee, bird: Bird, orbit: Orbit, dice: Dices }
+const icons = {
+  coffee: Coffee,
+  bird: Bird,
+  orbit: Orbit,
+  dice: Dices,
+  moon: Moon,
+  fish: Fish,
+  cat: Cat,
+}
 
 export default function Welcome({
   onPrompt,

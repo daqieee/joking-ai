@@ -18,11 +18,26 @@ const modelCases = [
     name: 'TeapotGPT',
     levels: ['温水', '微沸', '沸腾', '高压', '锅炉超频', '宇宙茶道', '拟真'],
   },
+  {
+    id: 'acedia',
+    name: 'Acedia 摸鱼助手',
+    levels: ['歇会儿', '摸鱼', '躺平', '已读不回', '甩锅大师', '宇宙休假', '拟真'],
+  },
+  {
+    id: 'guppy',
+    name: 'Guppy 小鱼',
+    levels: ['小泡泡', '游一圈', '找零食', '鱼缸哲学', '深海会议', '宇宙鱼缸', '拟真'],
+  },
+  {
+    id: 'miso',
+    name: 'Miso 猫猫',
+    levels: ['眯一会', '伸懒腰', '巡逻纸箱', '猫爪审核', '全屋制霸', '宇宙午睡', '拟真'],
+  },
 ] as const
 
 const ggufPattern = /\.gguf(?:\?|$)/i
 const modelResourcePattern =
-  /\.(?:gguf|wasm)(?:\?|$)|wllama|huggingface\.co|\bhf\.co|xethub|cdn-lfs|raw\.githubusercontent\.com/i
+  /\.(?:gguf|onnx|wasm)(?:\?|$)|wllama|onnxruntime|huggingface\.co|\bhf\.co|xethub|cdn-lfs|raw\.githubusercontent\.com/i
 const resourcesByPage = new WeakMap<Page, string[]>()
 
 async function selectModel(page: Page, name: string) {
@@ -65,14 +80,14 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./')
 })
 
-test('offers only three models, their seven levels, and preserves level ids and drafts', async ({
+test('offers all six models, their seven levels, and preserves level ids and drafts', async ({
   page,
 }) => {
   const input = page.getByRole('textbox', { name: '消息', exact: true })
   await input.fill('这是跨模型保留的草稿')
   await page.getByRole('button', { name: /^选择模型：/ }).click()
   const models = page.getByRole('listbox', { name: '选择模型', exact: true })
-  await expect(models.getByRole('option')).toHaveCount(3)
+  await expect(models.getByRole('option')).toHaveCount(6)
   for (const oldName of ['杠精 Pro', '废话大师', '职场嘴替', '猫言猫语']) {
     await expect(models.getByRole('option', { name: new RegExp(oldName) })).toHaveCount(0)
   }
@@ -150,8 +165,11 @@ for (const model of modelCases) {
         const preview = reply.locator('iframe[title="鹈鹕 HTML 预览"]')
         await expect(preview).toHaveAttribute('sandbox', '')
         await expect(preview).toHaveAttribute('srcdoc', /鹈鹕/)
-      } else {
+      } else if (model.id === 'teapot-gpt') {
         await expect(reply.locator('.message-text')).toContainText('418')
+      } else {
+        await expect(reply.locator('.message-text')).not.toBeEmpty()
+        await expect(reply.locator('.message-text')).not.toContainText('418')
       }
     }
     expect(modelRequests).toEqual([])
@@ -501,13 +519,13 @@ test('switching chats cancels an active real download before an old error can af
   }
 })
 
-test('three-model menus, seven-level menus, lab and replies fit 320px without axe violations', async ({
+test('six-model menus, seven-level menus, lab and replies fit 320px without axe violations', async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 320, height: 740 })
   await page.getByRole('button', { name: /^选择模型：/ }).click()
   const models = page.getByRole('listbox', { name: '选择模型', exact: true })
-  await expect(models.getByRole('option')).toHaveCount(3)
+  await expect(models.getByRole('option')).toHaveCount(6)
   const modelBox = await models.boundingBox()
   expect(modelBox!.x).toBeGreaterThanOrEqual(0)
   expect(modelBox!.x + modelBox!.width).toBeLessThanOrEqual(320)
@@ -543,3 +561,77 @@ test('three-model menus, seven-level menus, lab and replies fit 320px without ax
   ).toEqual([])
   await page.screenshot({ path: testInfo.outputPath('models-320.png'), fullPage: true })
 })
+
+for (const model of modelCases.filter((item) => item.id === 'guppy' || item.id === 'miso')) {
+  test(`${model.name}: a failed ONNX download is visible and never becomes a simulated real answer`, async ({
+    page,
+  }) => {
+    let downloads = 0
+    await page.route(/https:\/\/huggingface\.co\//, async (route) => {
+      downloads += 1
+      await route.fulfill({ status: 503, body: 'intentional ONNX download failure' })
+    })
+    await selectModel(page, model.name)
+    await selectLevel(page, 6)
+    await expect(page.getByRole('note').filter({ hasText: /ONNX/ })).toContainText(/\d.*MB/i)
+    expect(downloads).toBe(0)
+    await start(page, 'Hello, how are you?')
+    await expect.poll(() => downloads).toBeGreaterThan(0)
+    await expect(
+      page
+        .getByRole('alert')
+        .filter({ hasText: /下载|加载|模型|失败/ })
+        .first(),
+    ).toBeVisible({ timeout: 45_000 })
+    await expect(page.locator('.assistant-message:not(.pending-message)')).toHaveCount(0)
+    await expect(page.getByRole('button', { name: '停止生成', exact: true })).toHaveCount(0)
+    await selectLevel(page, 0)
+    await start(page, 'Hello again')
+    await waitForReply(page, 1)
+    const saved = await snapshot(page)
+    const replies = saved.conversations[0].messages.filter(
+      (message: { role: string }) => message.role === 'assistant',
+    )
+    expect(replies).toHaveLength(1)
+    expect(replies[0].provider).toBe('simulation')
+    expect(replies[0].reasoningId).toBe('low')
+  })
+
+  test(`${model.name}: cancelling ONNX loading isolates late errors from the next chat`, async ({
+    page,
+  }) => {
+    let started = false
+    let release = () => {}
+    const gate = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    await page.route(/https:\/\/huggingface\.co\//, async (route) => {
+      started = true
+      await gate
+      await route.fulfill({ status: 503, body: 'obsolete ONNX request' }).catch(() => {})
+    })
+    try {
+      await selectModel(page, model.name)
+      await selectLevel(page, 6)
+      await start(page, 'Cancel this animal download')
+      await expect.poll(() => started).toBe(true)
+      await page.getByRole('button', { name: '停止生成', exact: true }).click()
+      await expect(page.locator('.pending-message')).toHaveCount(0)
+      await page.getByRole('button', { name: '新建对话', exact: true }).click()
+      release()
+      await selectLevel(page, 0)
+      await start(page, 'Hello in a fresh chat')
+      await waitForReply(page, 1)
+      const saved = await snapshot(page)
+      const old = saved.conversations.find((chat: { title: string }) =>
+        chat.title.includes('Cancel this animal'),
+      )
+      expect(old.messages).toHaveLength(1)
+      const active = saved.conversations.find((chat: { id: string }) => chat.id === saved.activeId)
+      expect(active.messages[1].provider).toBe('simulation')
+      await expect(page.getByRole('alert')).toHaveCount(0)
+    } finally {
+      release()
+    }
+  })
+}
