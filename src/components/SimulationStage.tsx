@@ -1,4 +1,4 @@
-import { Bird, Coffee, Dices, Moon, Fish, Cat } from 'lucide-react'
+import { Bird, Coffee, Dices, Moon, Fish, Cat, ChevronRight } from 'lucide-react'
 import type { SimulationStage as Stage } from '../types'
 
 const icons = { pelican: Bird, random: Dices, teapot: Coffee, acedia: Moon, guppy: Fish, miso: Cat }
@@ -14,11 +14,29 @@ const scenes = {
 export default function SimulationStage({
   stage,
   active = false,
+  clean = false,
 }: {
   stage: Stage
   active?: boolean
+  clean?: boolean
 }) {
   const Icon = icons[stage.kind]
+  if (clean)
+    return (
+      <details className="clean-stage" aria-label="模拟演出 · 非真实推理">
+        <summary>
+          <ChevronRight size={15} aria-hidden="true" />
+          <span>{active ? '正在模拟分析' : '已完成模拟分析'}</span>
+        </summary>
+        <div className="clean-stage-body">
+          <p className="clean-stage-note">模拟演出 · 非真实推理 · 强度 {stage.level} / 6</p>
+          {stage.steps.map((step, index) => (
+            <p key={index}>{step}</p>
+          ))}
+          <p className="clean-stage-note">以上为预设娱乐台词，不是模型思维链。</p>
+        </div>
+      </details>
+    )
   return (
     <section
       className={`simulation-stage ${stage.kind} level-${stage.level}${active ? ' is-active' : ''}`}

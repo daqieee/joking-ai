@@ -7,6 +7,7 @@ import HtmlPreview from './HtmlPreview'
 import SimulationStage from './SimulationStage'
 
 interface Props {
+  clean?: boolean
   messages: Message[]
   pending: PendingReply | null
   failure: GenerationFailure | null
@@ -14,7 +15,14 @@ interface Props {
   onToast: (message: string) => void
 }
 
-export default function ChatMessages({ messages, pending, failure, onRetry, onToast }: Props) {
+export default function ChatMessages({
+  messages,
+  pending,
+  failure,
+  onRetry,
+  onToast,
+  clean = false,
+}: Props) {
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const end = useRef<HTMLDivElement>(null)
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -103,7 +111,7 @@ export default function ChatMessages({ messages, pending, failure, onRetry, onTo
                         : 'MOCK'}
                 </span>
               </div>
-              {!legacy && message.stage && <SimulationStage stage={message.stage} />}
+              {!legacy && message.stage && <SimulationStage stage={message.stage} clean={clean} />}
               {message.incomplete && (
                 <p className="incomplete-label">生成未完成 · 已保留收到的内容</p>
               )}
@@ -159,7 +167,7 @@ export default function ChatMessages({ messages, pending, failure, onRetry, onTo
               </span>
             </div>
             {pending.stage ? (
-              <SimulationStage stage={pending.stage} active />
+              <SimulationStage stage={pending.stage} active clean={clean} />
             ) : (
               <div className="thinking">
                 <span className="thinking-dots" aria-hidden="true">

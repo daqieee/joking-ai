@@ -71,6 +71,8 @@ async function snapshot(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  // Keep the original theatre regression suite explicitly in classic mode.
+  await page.addInitScript(() => localStorage.setItem('joking-ai.interface', 'classic'))
   const resources: string[] = []
   resourcesByPage.set(page, resources)
   page.on('request', (request) => {

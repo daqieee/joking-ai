@@ -31,6 +31,8 @@ async function send(page: Page, message: string) {
 }
 
 test.beforeEach(async ({ page }) => {
+  // Keep the original theatre regression suite explicitly in classic mode.
+  await page.addInitScript(() => localStorage.setItem('joking-ai.interface', 'classic'))
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('./')
 })

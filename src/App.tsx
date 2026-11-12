@@ -11,6 +11,21 @@ import { getModel } from './config/models'
 
 export default function App() {
   const chat = useChat()
+  const [clean, setClean] = useState(() => {
+    try {
+      return localStorage.getItem('joking-ai.interface') !== 'classic'
+    } catch {
+      return true
+    }
+  })
+  function changeInterface(value: boolean) {
+    setClean(value)
+    try {
+      localStorage.setItem('joking-ai.interface', value ? 'clean' : 'classic')
+    } catch {
+      /* Browsing still works without storage. */
+    }
+  }
   const [draft, setDraft] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -82,7 +97,9 @@ export default function App() {
   const pending = chat.pending?.conversationId === chat.active?.id ? chat.pending : null
 
   return (
-    <div className={`app${sidebarCollapsed && !mobile ? ' sidebar-collapsed' : ''}`}>
+    <div
+      className={`app${clean ? ' clean-interface' : ''}${sidebarCollapsed && !mobile ? ' sidebar-collapsed' : ''}`}
+    >
       <Sidebar
         conversations={chat.snapshot.conversations}
         activeId={chat.snapshot.activeId}
@@ -126,6 +143,14 @@ export default function App() {
             </span>
           </div>
           <div className="topbar-right">
+            <div className="interface-switch" role="group" aria-label="界面风格">
+              <button type="button" aria-pressed={!clean} onClick={() => changeInterface(false)}>
+                经典版
+              </button>
+              <button type="button" aria-pressed={clean} onClick={() => changeInterface(true)}>
+                纯净版
+              </button>
+            </div>
             <span className="mock-status">
               <span className="status-dot" />
               {chat.snapshot.reasoningId === 'real'
@@ -147,6 +172,7 @@ export default function App() {
           <div className="conversation-scroll">
             {chat.active ? (
               <ChatMessages
+                clean={clean}
                 messages={chat.active.messages}
                 pending={pending}
                 failure={
@@ -159,6 +185,12 @@ export default function App() {
                 }}
                 onToast={setToast}
               />
+            ) : clean ? (
+              <div className="clean-welcome">
+                <span>JOKING AI</span>
+                <h1>今天，想认真地胡说些什么？</h1>
+                <p>选一个模型，开始一段不太正经的对话。</p>
+              </div>
             ) : (
               <Welcome
                 onPrompt={(prompt, modelId) => {
