@@ -2733,7 +2733,7 @@ h1 {
   }
 }
 
-/* An optional, quiet agent-style workspace. The original theatre stays intact. */
+/* The default, quiet agent-style workspace. The original theatre stays intact. */
 .interface-switch {
   display: flex;
   padding: 3px;
@@ -2756,7 +2756,7 @@ h1 {
 }
 .clean-interface {
   --ink: #202124;
-  --muted: #717680;
+  --muted: #606773;
   --on-tint: #616771;
   --border: #e9eaec;
 }
@@ -2811,7 +2811,7 @@ h1 {
   border-color: #e7e9ec;
 }
 .clean-interface .interface-switch button {
-  color: #6b727d;
+  color: #565e69;
 }
 .clean-interface .interface-switch button[aria-pressed='true'] {
   color: #25272c;
